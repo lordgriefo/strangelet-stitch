@@ -518,7 +518,8 @@ async def analyze_with_openai_compatible(
             ],
         }],
     }
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    timeout_cfg = httpx.Timeout(20.0, connect=3.0)
+    async with httpx.AsyncClient(timeout=timeout_cfg) as client:
         resp = await client.post(url, headers=headers, json=payload)
         resp.raise_for_status()
         data = resp.json()
@@ -621,12 +622,29 @@ async def analyze_with_claude(grid_path: Path, clip_meta: dict, api_key: str, mo
         return parsed
 
 
+def is_local_server_open(base_url: str) -> bool:
+    """Quick 0.15s socket probe to verify a localhost LLM server is actually running."""
+    import socket
+    from urllib.parse import urlparse
+    try:
+        parsed = urlparse(base_url)
+        host = parsed.hostname or "localhost"
+        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        with socket.create_connection((host, port), timeout=0.15):
+            return True
+    except Exception:
+        return False
+
+
 async def enrich_clip_with_ai(clip_meta: dict, provider_override: str | None = None) -> dict:
     """Route clip/image analysis to Universal OpenAI-Compatible API, Gemini, Claude, Ollama, or Local CV."""
     settings = load_settings()
-    provider = provider_override or settings.get("ai_provider", "hybrid_auto")
+    provider = provider_override or settings.get("ai_provider", "local_cv")
     grid_path = THUMBS_DIR / f"{clip_meta['id']}_grid.jpg"
     if not grid_path.exists():
+        return clip_meta
+
+    if provider == "local_cv":
         return clip_meta
 
     ai_result = None
@@ -638,9 +656,11 @@ async def enrich_clip_with_ai(clip_meta: dict, provider_override: str | None = N
         api_key = settings.get("universal_api_key", "").strip()
         if not base_url or not model:
             return None
-        # If cloud endpoint requires a key and none is set, skip in hybrid_auto mode
         is_local = "localhost" in base_url or "127.0.0.1" in base_url
-        if not is_local and not api_key and provider == "hybrid_auto":
+        if is_local:
+            if not is_local_server_open(base_url):
+                return None
+        elif not api_key and provider == "hybrid_auto":
             return None
         return await analyze_with_openai_compatible(grid_path, clip_meta, base_url, model, api_key)
 
