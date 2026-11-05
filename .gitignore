@@ -1,0 +1,27 @@
+# Tauri / Rust build targets
+src-tauri/target/
+src-tauri/binaries/
+
+# Node dependencies
+node_modules/
+dist/
+
+# Python virtual environment & caches
+.venv/
+__pycache__/
+*.pyc
+
+# Local workspace cache & temp exports
+workspace/cache/
+*.mp4
+*.webm
+*.wav
+*.mp3
+
+# Local environment / IDE
+.env
+.vscode/
+.idea/ 
+.cache/
+workspace/
+fade.ty.html

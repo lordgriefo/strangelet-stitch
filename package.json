@@ -1,0 +1,27 @@
+{
+  "name": "strangelet-stitch",
+  "productName": "Strangelet Stitch",
+  "version": "1.1.0",
+  "description": "Strangelet Stitch — Audio-Reactive Video & Montage Editor with Ken Burns Motion and Automated Beat-Sync Pacing.",
+  "main": "backend/main.py",
+  "scripts": {
+    "start": "D:\\mv-auto-e\\.venv\\Scripts\\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8765",
+    "dev": "D:\\mv-auto-e\\.venv\\Scripts\\python.exe -m uvicorn backend.main:app --reload --host 127.0.0.1 --port 8765",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.3"
+  },
+  "keywords": [
+    "strangelet-splicer",
+    "ai-video-editor",
+    "audio-reactive",
+    "music-video",
+    "ken-burns",
+    "beat-sync"
+  ],
+  "author": "Strangelet Core",
+  "license": "MIT"
+}

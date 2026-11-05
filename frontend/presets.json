@@ -1,0 +1,2379 @@
+{
+  "manual_workbench_slate": {
+    "id": "manual_workbench_slate",
+    "category": "core",
+    "name": "\ud83d\udee0\ufe0f Manual Workbench (Empty Slate)",
+    "description": "Loads the audio waveform, BPM beat/bar grid, and transient markers without auto-cuts (preserving any Pinned blocks) for total hands-on drag-and-drop assembly, edge trimming, and playhead splitting.",
+    "min_cut_floor": 0.25,
+    "max_cut_ceiling": 8.0,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.0,
+    "fx_intensity": 0.5,
+    "transition_mode": "hard_cut",
+    "sorting_logic": "manual_empty_slate",
+    "motion_behavior": "natural_ken_burns",
+    "style_fx": "clean",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "subliminal_sigil_flash": false,
+    "obsidian_scrying_vignette": false,
+    "thelemic_dye_bloom": false,
+    "cosmic_static_glitch": false,
+    "geometric_echo_tunnel": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.1,
+          0.5
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.25,
+          "snare_flash": 0.2,
+          "shake": 0.1,
+          "rgb_split": 0.15,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.2,
+          0.65
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.3,
+          "snare_flash": 0.25,
+          "shake": 0.15,
+          "rgb_split": 0.2,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.35,
+          0.8
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.35,
+          "shake": 0.25,
+          "rgb_split": 0.3,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.5,
+          1.0
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.65,
+          "snare_flash": 0.5,
+          "shake": 0.35,
+          "rgb_split": 0.4,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.4,
+          0.9
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.5,
+          "snare_flash": 0.4,
+          "shake": 0.25,
+          "rgb_split": 0.3,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.1,
+          0.45
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.2,
+          "snare_flash": 0.15,
+          "shake": 0.05,
+          "rgb_split": 0.1,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "narrative_storyboard": {
+    "id": "narrative_storyboard",
+    "category": "core",
+    "name": "\ud83c\udfac Narrative Storyboard",
+    "description": "01/02 chronological spine, 4.0s+ holds, full clip duration preservation, and clean frame-accurate cuts.",
+    "min_cut_floor": 4.0,
+    "max_cut_ceiling": 8.0,
+    "preserve_full_duration": true,
+    "story_vs_chop": 0.0,
+    "fx_intensity": 0.35,
+    "transition_mode": "hard_cut",
+    "sorting_logic": "story_spine",
+    "motion_behavior": "gentle_ken_burns",
+    "style_fx": "clean",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.5
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.15,
+          "snare_flash": 0.0,
+          "shake": 0.0,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.15,
+          0.65
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.2,
+          "snare_flash": 0.0,
+          "shake": 0.0,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.35,
+          0.8
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.25,
+          "snare_flash": 0.0,
+          "shake": 0.0,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.5,
+          1.0
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.35,
+          "snare_flash": 0.0,
+          "shake": 0.05,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.4,
+          0.9
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.3,
+          "snare_flash": 0.0,
+          "shake": 0.0,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.45
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.1,
+          "snare_flash": 0.0,
+          "shake": 0.0,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "lofi_vhs_tape": {
+    "id": "lofi_vhs_tape",
+    "category": "core",
+    "name": "\ud83d\udcfc Lo-Fi VHS Tape Deck",
+    "description": "2.0s\u20134.0s cuts, subtle CRT scanlines, tape tracking flicker on snares, and slow nostalgic Ken Burns drift.",
+    "min_cut_floor": 2.0,
+    "max_cut_ceiling": 4.0,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.3,
+    "fx_intensity": 0.85,
+    "transition_mode": "hard_cut",
+    "sorting_logic": "vibe_warm",
+    "motion_behavior": "slow_drift",
+    "style_fx": "vhs_tape",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.1,
+          0.45
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.25,
+          "snare_flash": 0.35,
+          "shake": 0.15,
+          "rgb_split": 0.4,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.2,
+          0.55
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.3,
+          "snare_flash": 0.45,
+          "shake": 0.2,
+          "rgb_split": 0.45,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.35,
+          0.75
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.4,
+          "snare_flash": 0.6,
+          "shake": 0.3,
+          "rgb_split": 0.55,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.5,
+          0.9
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.55,
+          "snare_flash": 0.75,
+          "shake": 0.4,
+          "rgb_split": 0.65,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.4,
+          0.8
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.55,
+          "shake": 0.25,
+          "rgb_split": 0.5,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.05,
+          0.4
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.2,
+          "snare_flash": 0.25,
+          "shake": 0.1,
+          "rgb_split": 0.35,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "cyber_glitch_hyperchop": {
+    "id": "cyber_glitch_hyperchop",
+    "category": "core",
+    "name": "\u26a1 Cyber Glitch / Hyper-Chop",
+    "description": "0.20s\u20130.45s rapid transient slicing, aggressive RGB channel tear, horizontal slice displacement, and strobe flash.",
+    "min_cut_floor": 0.2,
+    "max_cut_ceiling": 0.45,
+    "preserve_full_duration": false,
+    "story_vs_chop": 1.0,
+    "fx_intensity": 1.35,
+    "transition_mode": "quick_glitch",
+    "sorting_logic": "high_energy",
+    "motion_behavior": "hyper_kinetic",
+    "style_fx": "cyber_glitch",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.4,
+          0.8
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.75,
+          "snare_flash": 0.7,
+          "shake": 0.55,
+          "rgb_split": 0.8,
+          "speed_ramp": true
+        }
+      },
+      "verse": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.55,
+          0.9
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.85,
+          "snare_flash": 0.8,
+          "shake": 0.65,
+          "rgb_split": 0.85,
+          "speed_ramp": true
+        }
+      },
+      "build": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.65,
+          1.0
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 1.0,
+          "snare_flash": 0.95,
+          "shake": 0.85,
+          "rgb_split": 0.95,
+          "speed_ramp": true
+        }
+      },
+      "drop": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.8,
+          1.0
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 1.2,
+          "snare_flash": 1.0,
+          "shake": 1.0,
+          "rgb_split": 1.0,
+          "speed_ramp": true
+        }
+      },
+      "chorus": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.7,
+          1.0
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 1.0,
+          "snare_flash": 0.9,
+          "shake": 0.8,
+          "rgb_split": 0.9,
+          "speed_ramp": true
+        }
+      },
+      "outro": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.35,
+          0.75
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.6,
+          "snare_flash": 0.5,
+          "shake": 0.4,
+          "rgb_split": 0.65,
+          "speed_ramp": true
+        }
+      }
+    }
+  },
+  "scene_cluster_montage": {
+    "id": "scene_cluster_montage",
+    "category": "core",
+    "name": "\ud83e\udde9 Scene Cluster Montage",
+    "description": "Anchors 01_video clips while firing rapid 01_a / 01_b still-image stabs on hi-hat and snare fills.",
+    "min_cut_floor": 0.22,
+    "max_cut_ceiling": 3.5,
+    "preserve_full_duration": true,
+    "story_vs_chop": 0.65,
+    "fx_intensity": 1.05,
+    "transition_mode": "auto_intensity",
+    "sorting_logic": "scene_cluster",
+    "motion_behavior": "cluster_anchor_plus_stabs",
+    "style_fx": "cluster_stab",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.15,
+          0.55
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.35,
+          "snare_flash": 0.25,
+          "shake": 0.1,
+          "rgb_split": 0.2,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "2_beats",
+        "target_energy": [
+          0.25,
+          0.68
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.5,
+          "snare_flash": 0.4,
+          "shake": 0.2,
+          "rgb_split": 0.3,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.45,
+          0.92
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.8,
+          "snare_flash": 0.75,
+          "shake": 0.55,
+          "rgb_split": 0.65,
+          "speed_ramp": true
+        }
+      },
+      "drop": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.7,
+          1.0
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 1.0,
+          "snare_flash": 0.9,
+          "shake": 0.8,
+          "rgb_split": 0.85,
+          "speed_ramp": true
+        }
+      },
+      "chorus": {
+        "cut_mode": "1_beat",
+        "target_energy": [
+          0.55,
+          0.95
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.8,
+          "snare_flash": 0.65,
+          "shake": 0.5,
+          "rgb_split": 0.55,
+          "speed_ramp": true
+        }
+      },
+      "outro": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.1,
+          0.45
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.25,
+          "snare_flash": 0.1,
+          "shake": 0.0,
+          "rgb_split": 0.1,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "analog_16mm_film": {
+    "id": "analog_16mm_film",
+    "category": "core",
+    "name": "\ud83c\udf9e\ufe0f Analog 16mm Film Reel",
+    "description": "3.0s\u20135.0s phrase-locked cuts, animated 16mm film grain overlay, warm halation glow, and subtle gate weave.",
+    "min_cut_floor": 3.0,
+    "max_cut_ceiling": 5.0,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.25,
+    "fx_intensity": 0.7,
+    "transition_mode": "hard_cut",
+    "sorting_logic": "story_spine",
+    "motion_behavior": "organic_16mm",
+    "style_fx": "film_16mm",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.45
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.2,
+          "snare_flash": 0.15,
+          "shake": 0.08,
+          "rgb_split": 0.1,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.15,
+          0.6
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.3,
+          "snare_flash": 0.2,
+          "shake": 0.1,
+          "rgb_split": 0.15,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.35,
+          0.75
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.35,
+          "shake": 0.18,
+          "rgb_split": 0.2,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.55,
+          0.95
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.6,
+          "snare_flash": 0.45,
+          "shake": 0.25,
+          "rgb_split": 0.25,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.45,
+          0.85
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.5,
+          "snare_flash": 0.3,
+          "shake": 0.15,
+          "rgb_split": 0.2,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.4
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.15,
+          "snare_flash": 0.1,
+          "shake": 0.05,
+          "rgb_split": 0.1,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "dark_minimalist": {
+    "id": "dark_minimalist",
+    "category": "core",
+    "name": "\ud83c\udf11 Dark Minimalist",
+    "description": "5.0s\u20138.0s hypnotic holds, high-contrast shadow crush, and automatic black-frame dropouts on quiet passages.",
+    "min_cut_floor": 5.0,
+    "max_cut_ceiling": 8.0,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.15,
+    "fx_intensity": 0.65,
+    "transition_mode": "hard_cut",
+    "sorting_logic": "dark_low_luma",
+    "motion_behavior": "slow_tension",
+    "style_fx": "dark_minimalist",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.35
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.2,
+          "snare_flash": 0.0,
+          "shake": 0.0,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.1,
+          0.45
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.25,
+          "snare_flash": 0.1,
+          "shake": 0.0,
+          "rgb_split": 0.05,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.25,
+          0.65
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.4,
+          "snare_flash": 0.25,
+          "shake": 0.1,
+          "rgb_split": 0.15,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.45,
+          0.85
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.65,
+          "snare_flash": 0.45,
+          "shake": 0.25,
+          "rgb_split": 0.25,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.35,
+          0.75
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.5,
+          "snare_flash": 0.2,
+          "shake": 0.1,
+          "rgb_split": 0.15,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.3
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.15,
+          "snare_flash": 0.0,
+          "shake": 0.0,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "social_reel_frenzy": {
+    "id": "social_reel_frenzy",
+    "category": "core",
+    "name": "\ud83d\udd25 Social Short / Reel Frenzy",
+    "description": "Relentless beat-locked cuts (0.35s\u20131.0s) with hard zoom-punch impacts on every downbeat and snare.",
+    "min_cut_floor": 0.35,
+    "max_cut_ceiling": 1.0,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.85,
+    "fx_intensity": 1.25,
+    "transition_mode": "auto_intensity",
+    "sorting_logic": "high_energy",
+    "motion_behavior": "downbeat_zoom_punch",
+    "style_fx": "reel_frenzy",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "1_beat",
+        "target_energy": [
+          0.45,
+          0.85
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.9,
+          "snare_flash": 0.65,
+          "shake": 0.5,
+          "rgb_split": 0.55,
+          "speed_ramp": true
+        }
+      },
+      "verse": {
+        "cut_mode": "1_beat",
+        "target_energy": [
+          0.5,
+          0.9
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.95,
+          "snare_flash": 0.6,
+          "shake": 0.55,
+          "rgb_split": 0.5,
+          "speed_ramp": true
+        }
+      },
+      "build": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.65,
+          1.0
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 1.15,
+          "snare_flash": 0.85,
+          "shake": 0.75,
+          "rgb_split": 0.75,
+          "speed_ramp": true
+        }
+      },
+      "drop": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.75,
+          1.0
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 1.35,
+          "snare_flash": 0.95,
+          "shake": 0.9,
+          "rgb_split": 0.85,
+          "speed_ramp": true
+        }
+      },
+      "chorus": {
+        "cut_mode": "1_beat",
+        "target_energy": [
+          0.65,
+          1.0
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 1.15,
+          "snare_flash": 0.8,
+          "shake": 0.7,
+          "rgb_split": 0.7,
+          "speed_ramp": true
+        }
+      },
+      "outro": {
+        "cut_mode": "2_beats",
+        "target_energy": [
+          0.4,
+          0.8
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.8,
+          "snare_flash": 0.45,
+          "shake": 0.35,
+          "rgb_split": 0.4,
+          "speed_ramp": true
+        }
+      }
+    }
+  },
+  "burroughs_cutup_machine": {
+    "id": "burroughs_cutup_machine",
+    "category": "avant_garde",
+    "name": "\u2702\ufe0f Burroughs Cut-Up Machine",
+    "description": "3-column vertical Fold-In split canvas sequencing streams asynchronously, snare typographic flash injection, and 3-frame kick reverse-stutter.",
+    "min_cut_floor": 0.45,
+    "max_cut_ceiling": 2.4,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.7,
+    "fx_intensity": 1.25,
+    "transition_mode": "quick_glitch",
+    "sorting_logic": "cutup_fold_in",
+    "motion_behavior": "3_column_fold_in",
+    "style_fx": "burroughs_cutup",
+    "fold_in_columns": 3,
+    "sprocket_slip": false,
+    "typographic_flashes": true,
+    "step_print_12fps": false,
+    "reverse_stutter": true,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "2_beats",
+        "target_energy": [
+          0.25,
+          0.75
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.55,
+          "snare_flash": 0.75,
+          "shake": 0.35,
+          "rgb_split": 0.65,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.35,
+          0.85
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.65,
+          "snare_flash": 0.85,
+          "shake": 0.45,
+          "rgb_split": 0.75,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.55,
+          0.95
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.85,
+          "snare_flash": 0.95,
+          "shake": 0.65,
+          "rgb_split": 0.85,
+          "speed_ramp": true
+        }
+      },
+      "drop": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.7,
+          1.0
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 1.05,
+          "snare_flash": 1.0,
+          "shake": 0.85,
+          "rgb_split": 0.95,
+          "speed_ramp": true
+        }
+      },
+      "chorus": {
+        "cut_mode": "1_beat",
+        "target_energy": [
+          0.55,
+          0.95
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.8,
+          "snare_flash": 0.9,
+          "shake": 0.55,
+          "rgb_split": 0.8,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "2_beats",
+        "target_energy": [
+          0.2,
+          0.65
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.6,
+          "shake": 0.25,
+          "rgb_split": 0.5,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "brakhage_emulsion_decay": {
+    "id": "brakhage_emulsion_decay",
+    "category": "avant_garde",
+    "name": "\ud83d\udd25 Brakhage Emulsion Decay",
+    "description": "Vertical sprocket jumps, hand-scratched celluloid emulsion lines, and organic copper/amber heat burns keyed to bass drops.",
+    "min_cut_floor": 0.35,
+    "max_cut_ceiling": 2.2,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.65,
+    "fx_intensity": 1.3,
+    "transition_mode": "flash_white",
+    "sorting_logic": "high_energy",
+    "motion_behavior": "sprocket_jitter",
+    "style_fx": "brakhage_emulsion",
+    "fold_in_columns": 1,
+    "sprocket_slip": true,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "2_beats",
+        "target_energy": [
+          0.2,
+          0.65
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.6,
+          "snare_flash": 0.65,
+          "shake": 0.5,
+          "rgb_split": 0.45,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.35,
+          0.8
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.75,
+          "snare_flash": 0.75,
+          "shake": 0.65,
+          "rgb_split": 0.55,
+          "speed_ramp": true
+        }
+      },
+      "build": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.55,
+          0.95
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.95,
+          "snare_flash": 0.9,
+          "shake": 0.8,
+          "rgb_split": 0.7,
+          "speed_ramp": true
+        }
+      },
+      "drop": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.75,
+          1.0
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 1.25,
+          "snare_flash": 1.0,
+          "shake": 0.95,
+          "rgb_split": 0.85,
+          "speed_ramp": true
+        }
+      },
+      "chorus": {
+        "cut_mode": "1_beat",
+        "target_energy": [
+          0.6,
+          0.95
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.95,
+          "snare_flash": 0.85,
+          "shake": 0.75,
+          "rgb_split": 0.65,
+          "speed_ramp": true
+        }
+      },
+      "outro": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.15,
+          0.55
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.45,
+          "shake": 0.35,
+          "rgb_split": 0.3,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "structural_flicker_sharits": {
+    "id": "structural_flicker_sharits",
+    "category": "avant_garde",
+    "name": "\u26a1 Structural Flicker (Sharits / Conrad)",
+    "description": "1-to-2 frame alternating strobes between adjacent clips and pure black/white frames on cymbal and hi-hat transients.",
+    "min_cut_floor": 0.2,
+    "max_cut_ceiling": 1.1,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.9,
+    "fx_intensity": 1.4,
+    "transition_mode": "flash_white",
+    "sorting_logic": "high_energy",
+    "motion_behavior": "structural_strobe",
+    "style_fx": "structural_flicker",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "1_beat",
+        "target_energy": [
+          0.3,
+          0.75
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.4,
+          "snare_flash": 0.95,
+          "shake": 0.2,
+          "rgb_split": 0.5,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.45,
+          0.85
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.5,
+          "snare_flash": 1.0,
+          "shake": 0.3,
+          "rgb_split": 0.6,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.6,
+          1.0
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.7,
+          "snare_flash": 1.0,
+          "shake": 0.45,
+          "rgb_split": 0.75,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.75,
+          1.0
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.85,
+          "snare_flash": 1.0,
+          "shake": 0.6,
+          "rgb_split": 0.85,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "1_beat",
+        "target_energy": [
+          0.6,
+          0.95
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.65,
+          "snare_flash": 1.0,
+          "shake": 0.4,
+          "rgb_split": 0.7,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "2_beats",
+        "target_energy": [
+          0.25,
+          0.65
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.3,
+          "snare_flash": 0.8,
+          "shake": 0.15,
+          "rgb_split": 0.4,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "metric_time_stutter_kubelka": {
+    "id": "metric_time_stutter_kubelka",
+    "category": "avant_garde",
+    "name": "\ud83d\udcd0 Metric Time-Stutter (Kubelka)",
+    "description": "Strict Fibonacci-ratio frame slicing (1, 2, 3, 5, 8, 13 units) with 3-frame reverse-stutter loops on every downbeat.",
+    "min_cut_floor": 0.22,
+    "max_cut_ceiling": 2.6,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.8,
+    "fx_intensity": 1.15,
+    "transition_mode": "hard_cut",
+    "sorting_logic": "fibonacci_metric",
+    "motion_behavior": "metric_reverse_stutter",
+    "style_fx": "kubelka_metric",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": true,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "fibonacci_metric",
+        "target_energy": [
+          0.2,
+          0.7
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.35,
+          "shake": 0.2,
+          "rgb_split": 0.3,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "fibonacci_metric",
+        "target_energy": [
+          0.35,
+          0.8
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.55,
+          "snare_flash": 0.45,
+          "shake": 0.25,
+          "rgb_split": 0.35,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "fibonacci_metric",
+        "target_energy": [
+          0.5,
+          0.95
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.75,
+          "snare_flash": 0.65,
+          "shake": 0.4,
+          "rgb_split": 0.5,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "fibonacci_metric",
+        "target_energy": [
+          0.7,
+          1.0
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.95,
+          "snare_flash": 0.8,
+          "shake": 0.55,
+          "rgb_split": 0.65,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "fibonacci_metric",
+        "target_energy": [
+          0.55,
+          0.9
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.7,
+          "snare_flash": 0.6,
+          "shake": 0.35,
+          "rgb_split": 0.45,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "fibonacci_metric",
+        "target_energy": [
+          0.15,
+          0.6
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.35,
+          "snare_flash": 0.25,
+          "shake": 0.15,
+          "rgb_split": 0.2,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "lynchian_industrial_monochrome": {
+    "id": "lynchian_industrial_monochrome",
+    "category": "avant_garde",
+    "name": "\ud83c\udfed Lynchian Industrial Monochrome (Eraserhead)",
+    "description": "Chalk-and-soot high-contrast monochrome, 12fps step-print cadence, sub-bass canvas tremors (20\u201360Hz), and 1-frame tungsten arc flashes on snares.",
+    "min_cut_floor": 2.5,
+    "max_cut_ceiling": 6.0,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.3,
+    "fx_intensity": 1.1,
+    "transition_mode": "hard_cut",
+    "sorting_logic": "dark_low_luma",
+    "motion_behavior": "step_print_tremor",
+    "style_fx": "lynch_monochrome",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": true,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.4
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.35,
+          "snare_flash": 0.85,
+          "shake": 0.75,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.1,
+          0.5
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.9,
+          "shake": 0.85,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.25,
+          0.7
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.6,
+          "snare_flash": 1.0,
+          "shake": 0.95,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.45,
+          0.9
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.8,
+          "snare_flash": 1.0,
+          "shake": 1.1,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.35,
+          0.8
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.65,
+          "snare_flash": 0.95,
+          "shake": 0.9,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.35
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.3,
+          "snare_flash": 0.75,
+          "shake": 0.65,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "mekas_bolex_diary": {
+    "id": "mekas_bolex_diary",
+    "category": "avant_garde",
+    "name": "\ud83d\udcfd\ufe0f Mekas Bolex Diary",
+    "description": "Rapid 2-to-4 frame bursts of stills and clips on transients resolving into lyrical 2.0s\u20133.0s contemplative holds.",
+    "min_cut_floor": 0.2,
+    "max_cut_ceiling": 3.0,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.6,
+    "fx_intensity": 0.95,
+    "transition_mode": "flash_white",
+    "sorting_logic": "mekas_burst_hold",
+    "motion_behavior": "bolex_diary_flutter",
+    "style_fx": "mekas_bolex",
+    "fold_in_columns": 1,
+    "sprocket_slip": true,
+    "typographic_flashes": false,
+    "step_print_12fps": true,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "mekas_burst_hold",
+        "target_energy": [
+          0.1,
+          0.55
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.3,
+          "snare_flash": 0.65,
+          "shake": 0.35,
+          "rgb_split": 0.2,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "mekas_burst_hold",
+        "target_energy": [
+          0.2,
+          0.65
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.4,
+          "snare_flash": 0.7,
+          "shake": 0.4,
+          "rgb_split": 0.25,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "mekas_burst_hold",
+        "target_energy": [
+          0.4,
+          0.85
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.55,
+          "snare_flash": 0.85,
+          "shake": 0.55,
+          "rgb_split": 0.35,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "mekas_burst_hold",
+        "target_energy": [
+          0.55,
+          0.95
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.7,
+          "snare_flash": 0.95,
+          "shake": 0.65,
+          "rgb_split": 0.45,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "mekas_burst_hold",
+        "target_energy": [
+          0.45,
+          0.85
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.55,
+          "snare_flash": 0.8,
+          "shake": 0.5,
+          "rgb_split": 0.35,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "mekas_burst_hold",
+        "target_energy": [
+          0.1,
+          0.5
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.25,
+          "snare_flash": 0.5,
+          "shake": 0.25,
+          "rgb_split": 0.15,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "marker_photo_montage_jetee": {
+    "id": "marker_photo_montage_jetee",
+    "category": "avant_garde",
+    "name": "\ud83d\uddbc\ufe0f Marker Photo-Montage (La Jet\u00e9e)",
+    "description": "Stills-only sequence holding 3.0s\u20135.0s across bars, awakening into a single moving video clip at peak track loudness.",
+    "min_cut_floor": 3.0,
+    "max_cut_ceiling": 5.0,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.15,
+    "fx_intensity": 0.65,
+    "transition_mode": "hard_cut",
+    "sorting_logic": "la_jetee_stills_plus_peak_video",
+    "motion_behavior": "gentle_ken_burns",
+    "style_fx": "marker_jetee",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.45
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.15,
+          "snare_flash": 0.1,
+          "shake": 0.0,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.1,
+          0.55
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.2,
+          "snare_flash": 0.15,
+          "shake": 0.0,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.3,
+          0.75
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.25,
+          "snare_flash": 0.2,
+          "shake": 0.05,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "1_bar",
+        "target_energy": [
+          0.6,
+          1.0
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.4,
+          "snare_flash": 0.35,
+          "shake": 0.1,
+          "rgb_split": 0.05,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.4,
+          0.85
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.3,
+          "snare_flash": 0.2,
+          "shake": 0.05,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.4
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.1,
+          "snare_flash": 0.05,
+          "shake": 0.0,
+          "rgb_split": 0.0,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "debord_detournement": {
+    "id": "debord_detournement",
+    "category": "avant_garde",
+    "name": "\u2696\ufe0f Debord D\u00e9tournement",
+    "description": "Dialectical tension: 6.0s\u20138.0s unbroken shots during high-energy sections vs. rapid staccato cuts during quiet passages.",
+    "min_cut_floor": 0.25,
+    "max_cut_ceiling": 8.0,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.55,
+    "fx_intensity": 0.9,
+    "transition_mode": "hard_cut",
+    "sorting_logic": "dialectical_debord",
+    "motion_behavior": "counter_dialectic",
+    "style_fx": "debord_detournement",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": true,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "dialectical_debord",
+        "target_energy": [
+          0.55,
+          0.95
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.4,
+          "snare_flash": 0.45,
+          "shake": 0.2,
+          "rgb_split": 0.3,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "dialectical_debord",
+        "target_energy": [
+          0.5,
+          0.9
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.5,
+          "shake": 0.25,
+          "rgb_split": 0.35,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "dialectical_debord",
+        "target_energy": [
+          0.15,
+          0.55
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.25,
+          "snare_flash": 0.2,
+          "shake": 0.1,
+          "rgb_split": 0.15,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "dialectical_debord",
+        "target_energy": [
+          0.05,
+          0.4
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.15,
+          "snare_flash": 0.1,
+          "shake": 0.05,
+          "rgb_split": 0.1,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "dialectical_debord",
+        "target_energy": [
+          0.1,
+          0.45
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.2,
+          "snare_flash": 0.15,
+          "shake": 0.05,
+          "rgb_split": 0.1,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "dialectical_debord",
+        "target_energy": [
+          0.6,
+          0.95
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.35,
+          "snare_flash": 0.4,
+          "shake": 0.2,
+          "rgb_split": 0.25,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "babalon_working_parsons": {
+    "id": "babalon_working_parsons",
+    "category": "esoteric",
+    "name": "\ud83d\udd25 Babalon Working (Parsons / 1946 Mojave)",
+    "description": "Saturated desert solar flares, blood-red & gold duotone shifts, heat-shimmer displacement. Strict 7-beat and 11-beat rhythmic intervals with 2-frame solar overexposure blooms & crimson flashes on heavy snares.",
+    "min_cut_floor": 2.4,
+    "max_cut_ceiling": 6.0,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.4,
+    "fx_intensity": 1.25,
+    "transition_mode": "flash_white",
+    "sorting_logic": "thelemic_7_11",
+    "motion_behavior": "mojave_heat_shimmer",
+    "style_fx": "babalon_working",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "subliminal_sigil_flash": false,
+    "obsidian_scrying_vignette": false,
+    "thelemic_dye_bloom": true,
+    "cosmic_static_glitch": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "thelemic_7_11",
+        "target_energy": [
+          0.35,
+          0.7
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.95,
+          "shake": 0.2,
+          "rgb_split": 0.25,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "thelemic_7_11",
+        "target_energy": [
+          0.45,
+          0.8
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.55,
+          "snare_flash": 1.05,
+          "shake": 0.25,
+          "rgb_split": 0.3,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "thelemic_7_11",
+        "target_energy": [
+          0.6,
+          0.9
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.7,
+          "snare_flash": 1.15,
+          "shake": 0.35,
+          "rgb_split": 0.4,
+          "speed_ramp": true
+        }
+      },
+      "drop": {
+        "cut_mode": "thelemic_7_11",
+        "target_energy": [
+          0.75,
+          1.0
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.9,
+          "snare_flash": 1.35,
+          "shake": 0.5,
+          "rgb_split": 0.5,
+          "speed_ramp": true
+        }
+      },
+      "chorus": {
+        "cut_mode": "thelemic_7_11",
+        "target_energy": [
+          0.65,
+          0.95
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.75,
+          "snare_flash": 1.2,
+          "shake": 0.4,
+          "rgb_split": 0.4,
+          "speed_ramp": true
+        }
+      },
+      "outro": {
+        "cut_mode": "thelemic_7_11",
+        "target_energy": [
+          0.3,
+          0.65
+        ],
+        "transition": "flash_white",
+        "fx": {
+          "bass_zoom": 0.4,
+          "snare_flash": 0.85,
+          "shake": 0.15,
+          "rgb_split": 0.2,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "chaos_sigil_flash_spare": {
+    "id": "chaos_sigil_flash_spare",
+    "category": "esoteric",
+    "name": "\ud83d\udf0f Chaos Sigil Flash (Austin Osman Spare / IOT)",
+    "description": "Slices graphic glyphs & stills as 1-frame (16ms) subconscious flashes. Sub-bass impacts and kick transients trigger instant negative/inverted 1-frame sigil injections returning immediately to the ongoing story clip.",
+    "min_cut_floor": 0.35,
+    "max_cut_ceiling": 3.5,
+    "preserve_full_duration": true,
+    "story_vs_chop": 0.55,
+    "fx_intensity": 1.3,
+    "transition_mode": "quick_glitch",
+    "sorting_logic": "story_spine",
+    "motion_behavior": "sigil_gnosis",
+    "style_fx": "chaos_sigil",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "subliminal_sigil_flash": true,
+    "obsidian_scrying_vignette": false,
+    "thelemic_dye_bloom": false,
+    "cosmic_static_glitch": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.25,
+          0.65
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.55,
+          "snare_flash": 0.65,
+          "shake": 0.25,
+          "rgb_split": 0.45,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.4,
+          0.75
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.65,
+          "snare_flash": 0.75,
+          "shake": 0.35,
+          "rgb_split": 0.55,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.6,
+          0.92
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.85,
+          "snare_flash": 0.9,
+          "shake": 0.5,
+          "rgb_split": 0.75,
+          "speed_ramp": true
+        }
+      },
+      "drop": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.78,
+          1.0
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 1.15,
+          "snare_flash": 1.1,
+          "shake": 0.7,
+          "rgb_split": 0.95,
+          "speed_ramp": true
+        }
+      },
+      "chorus": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.65,
+          0.95
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.95,
+          "snare_flash": 0.95,
+          "shake": 0.55,
+          "rgb_split": 0.8,
+          "speed_ramp": true
+        }
+      },
+      "outro": {
+        "cut_mode": "energy_arc",
+        "target_energy": [
+          0.2,
+          0.55
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.5,
+          "shake": 0.2,
+          "rgb_split": 0.35,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "enochian_scrying_glass_dee": {
+    "id": "enochian_scrying_glass_dee",
+    "category": "esoteric",
+    "name": "\ud83d\udd2e Enochian Scrying Glass (Dee & Kelley)",
+    "description": "Dark obsidian vignette falloff and radial mirror reflections. Hypnotic 5.0s\u20138.0s scrying holds with soft dissolves; cymbal/hi-hat washes trigger faint Enochian angelic character overlays.",
+    "min_cut_floor": 5.0,
+    "max_cut_ceiling": 8.0,
+    "preserve_full_duration": true,
+    "story_vs_chop": 0.15,
+    "fx_intensity": 0.95,
+    "transition_mode": "soft_dissolve",
+    "sorting_logic": "dark_low_luma",
+    "motion_behavior": "obsidian_mirror",
+    "style_fx": "enochian_scrying",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "subliminal_sigil_flash": false,
+    "obsidian_scrying_vignette": true,
+    "thelemic_dye_bloom": false,
+    "cosmic_static_glitch": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.1,
+          0.45
+        ],
+        "transition": "soft_dissolve",
+        "fx": {
+          "bass_zoom": 0.2,
+          "snare_flash": 0.2,
+          "shake": 0.05,
+          "rgb_split": 0.15,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.15,
+          0.55
+        ],
+        "transition": "soft_dissolve",
+        "fx": {
+          "bass_zoom": 0.25,
+          "snare_flash": 0.25,
+          "shake": 0.08,
+          "rgb_split": 0.2,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.25,
+          0.65
+        ],
+        "transition": "soft_dissolve",
+        "fx": {
+          "bass_zoom": 0.35,
+          "snare_flash": 0.35,
+          "shake": 0.12,
+          "rgb_split": 0.3,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.35,
+          0.75
+        ],
+        "transition": "soft_dissolve",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.45,
+          "shake": 0.15,
+          "rgb_split": 0.35,
+          "speed_ramp": false
+        }
+      },
+      "chorus": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.3,
+          0.7
+        ],
+        "transition": "soft_dissolve",
+        "fx": {
+          "bass_zoom": 0.4,
+          "snare_flash": 0.4,
+          "shake": 0.12,
+          "rgb_split": 0.3,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "2_bars",
+        "target_energy": [
+          0.05,
+          0.35
+        ],
+        "transition": "soft_dissolve",
+        "fx": {
+          "bass_zoom": 0.15,
+          "snare_flash": 0.15,
+          "shake": 0.05,
+          "rgb_split": 0.1,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "typhonian_transmissions_grant": {
+    "id": "typhonian_transmissions_grant",
+    "category": "esoteric",
+    "name": "\ud83d\udc41\ufe0f Typhonian Transmissions (Grant / Outer Gateways)",
+    "description": "Deep cosmic voids, inverted negative stroboscopic pulses, and erratic radio-frequency static glitches keyed to unpredictable transient spikes from beyond the Mauve Zone.",
+    "min_cut_floor": 0.3,
+    "max_cut_ceiling": 2.6,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.8,
+    "fx_intensity": 1.35,
+    "transition_mode": "quick_glitch",
+    "sorting_logic": "dark_low_luma",
+    "motion_behavior": "outer_gateway_static",
+    "style_fx": "typhonian_transmission",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": true,
+    "subliminal_sigil_flash": true,
+    "obsidian_scrying_vignette": false,
+    "thelemic_dye_bloom": false,
+    "cosmic_static_glitch": true,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.2,
+          0.65
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.5,
+          "snare_flash": 0.75,
+          "shake": 0.45,
+          "rgb_split": 0.85,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.35,
+          0.8
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.65,
+          "snare_flash": 0.85,
+          "shake": 0.55,
+          "rgb_split": 0.95,
+          "speed_ramp": true
+        }
+      },
+      "build": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.55,
+          0.95
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.85,
+          "snare_flash": 1.0,
+          "shake": 0.75,
+          "rgb_split": 1.15,
+          "speed_ramp": true
+        }
+      },
+      "drop": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.75,
+          1.0
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 1.1,
+          "snare_flash": 1.25,
+          "shake": 0.95,
+          "rgb_split": 1.35,
+          "speed_ramp": true
+        }
+      },
+      "chorus": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.6,
+          0.95
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.9,
+          "snare_flash": 1.05,
+          "shake": 0.8,
+          "rgb_split": 1.15,
+          "speed_ramp": true
+        }
+      },
+      "outro": {
+        "cut_mode": "transients_or_beat",
+        "target_energy": [
+          0.15,
+          0.55
+        ],
+        "transition": "quick_glitch",
+        "fx": {
+          "bass_zoom": 0.4,
+          "snare_flash": 0.65,
+          "shake": 0.35,
+          "rgb_split": 0.7,
+          "speed_ramp": false
+        }
+      }
+    }
+  },
+  "dim_carcosa_aldebaran_gold": {
+    "id": "dim_carcosa_aldebaran_gold",
+    "category": "esoteric",
+    "name": "\ud83d\udc51 Dim Carcosa / Aldebaran Gold",
+    "description": "Tarnished metallic gold, deep amber, and atmospheric dust haze. Slow, unhurried structural long takes alternating with sudden, jarring geometric match-cuts on downbeats.",
+    "min_cut_floor": 0.35,
+    "max_cut_ceiling": 6.5,
+    "preserve_full_duration": false,
+    "story_vs_chop": 0.35,
+    "fx_intensity": 1.05,
+    "transition_mode": "hard_cut",
+    "sorting_logic": "carcosa_long_jarring",
+    "motion_behavior": "aldebaran_dust",
+    "style_fx": "dim_carcosa",
+    "fold_in_columns": 1,
+    "sprocket_slip": false,
+    "typographic_flashes": false,
+    "step_print_12fps": false,
+    "reverse_stutter": false,
+    "subliminal_sigil_flash": false,
+    "obsidian_scrying_vignette": true,
+    "thelemic_dye_bloom": false,
+    "cosmic_static_glitch": false,
+    "section_rules": {
+      "intro": {
+        "cut_mode": "carcosa_long_jarring",
+        "target_energy": [
+          0.15,
+          0.55
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.35,
+          "snare_flash": 0.4,
+          "shake": 0.15,
+          "rgb_split": 0.25,
+          "speed_ramp": false
+        }
+      },
+      "verse": {
+        "cut_mode": "carcosa_long_jarring",
+        "target_energy": [
+          0.25,
+          0.65
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.45,
+          "snare_flash": 0.5,
+          "shake": 0.2,
+          "rgb_split": 0.3,
+          "speed_ramp": false
+        }
+      },
+      "build": {
+        "cut_mode": "carcosa_long_jarring",
+        "target_energy": [
+          0.4,
+          0.8
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.6,
+          "snare_flash": 0.65,
+          "shake": 0.3,
+          "rgb_split": 0.4,
+          "speed_ramp": false
+        }
+      },
+      "drop": {
+        "cut_mode": "carcosa_long_jarring",
+        "target_energy": [
+          0.55,
+          0.95
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.8,
+          "snare_flash": 0.85,
+          "shake": 0.45,
+          "rgb_split": 0.55,
+          "speed_ramp": true
+        }
+      },
+      "chorus": {
+        "cut_mode": "carcosa_long_jarring",
+        "target_energy": [
+          0.45,
+          0.85
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.65,
+          "snare_flash": 0.7,
+          "shake": 0.35,
+          "rgb_split": 0.45,
+          "speed_ramp": false
+        }
+      },
+      "outro": {
+        "cut_mode": "carcosa_long_jarring",
+        "target_energy": [
+          0.1,
+          0.45
+        ],
+        "transition": "hard_cut",
+        "fx": {
+          "bass_zoom": 0.25,
+          "snare_flash": 0.3,
+          "shake": 0.1,
+          "rgb_split": 0.2,
+          "speed_ramp": false
+        }
+      }
+    }
+  }
+}
