@@ -1415,11 +1415,19 @@ app.mount("/workspace", StaticFiles(directory=str(WORKSPACE_DIR)), name="workspa
 
 FRONTEND_DIR = BASE_DIR / "frontend"
 FRONTEND_DIR.mkdir(parents=True, exist_ok=True)
+ASSETS_DIR = FRONTEND_DIR / "assets"
+if ASSETS_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 
 
 @app.get("/")
 async def serve_index():
     return FileResponse(str(FRONTEND_DIR / "index.html"))
+
+
+@app.get("/opening_cinematic.html")
+async def serve_opening_cinematic():
+    return FileResponse(str(FRONTEND_DIR / "opening_cinematic.html"))
 
 
 @app.get("/styles.css")
@@ -1443,3 +1451,16 @@ async def serve_jszip_js():
 
 
 app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+
+
+@app.on_event("startup")
+async def on_startup():
+    import webbrowser
+    import threading
+    def _open_browser():
+        try:
+            webbrowser.open("http://127.0.0.1:8765")
+        except Exception:
+            pass
+    threading.Timer(0.8, _open_browser).start()
+
