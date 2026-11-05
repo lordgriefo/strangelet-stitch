@@ -156,6 +156,9 @@ const els = {
   waveformCanvas: document.getElementById('waveformCanvas'),
   lyricsTrack: document.getElementById('lyricsTrack'),
   cutsTrack: document.getElementById('cutsTrack'),
+  fxTrack: document.getElementById('fxTrack'),
+  videoTrack: document.getElementById('videoTrack'),
+  stillsTrack: document.getElementById('stillsTrack'),
   playheadLine: document.getElementById('playheadLine'),
   mainAudio: document.getElementById('mainAudioPlayer'),
   vidA: document.getElementById('videoDecoderA'),
@@ -1617,18 +1620,30 @@ function renderTimelineView() {
     ? `Story Spine: ${numberedCount} Ordered${preserveOn ? ' • Full Duration Preserved' : ''}`
     : (preserveOn ? 'Full Clip Duration: Active' : 'Story Spine: Dynamic AI');
 
-  // 1. Render Sections Track
+  // 1. Render Sections Track with Section Inserter Tool binding
   els.sectionsTrack.innerHTML = '';
-  if (Studio.audio && Studio.audio.sections) {
-    Studio.audio.sections.forEach((sec) => {
-      const block = document.createElement('div');
-      block.className = `section-block ${sec.type}`;
-      block.style.left = `${sec.start * Studio.pxPerSec}px`;
-      block.style.width = `${Math.max(4, (sec.end - sec.start) * Studio.pxPerSec - 2)}px`;
-      block.textContent = `${sec.type.toUpperCase()} (${(sec.end - sec.start).toFixed(1)}s)`;
-      els.sectionsTrack.appendChild(block);
-    });
-  }
+  const sectionsToRender = (Studio.audio && Studio.audio.sections && Studio.audio.sections.length)
+    ? Studio.audio.sections
+    : [
+        { type: 'intro', start: 0, end: Math.min(8.0, dur * 0.25) },
+        { type: 'verse', start: Math.min(8.0, dur * 0.25), end: Math.min(24.0, dur * 0.75) },
+        { type: 'chorus', start: Math.min(24.0, dur * 0.75), end: dur },
+      ];
+
+  sectionsToRender.forEach((sec) => {
+    const block = document.createElement('div');
+    block.className = `section-block ${sec.type}`;
+    block.style.left = `${sec.start * Studio.pxPerSec}px`;
+    block.style.width = `${Math.max(4, (sec.end - sec.start) * Studio.pxPerSec - 2)}px`;
+    block.textContent = `${sec.type.toUpperCase()} (${(sec.end - sec.start).toFixed(1)}s)`;
+    block.title = `⚡ Click to populate ${sec.type.toUpperCase()} with media using Section Inserter`;
+    block.style.cursor = 'pointer';
+    block.onclick = (e) => {
+      e.stopPropagation();
+      openSectionInserterModal(sec);
+    };
+    els.sectionsTrack.appendChild(block);
+  });
 
   // 2. Render Waveform + Beat/Bar/Transient Grid
   const wfCanvas = els.waveformCanvas;
@@ -1844,47 +1859,59 @@ function renderTimelineView() {
     };
   }
 
-  // 3. Render Assembled Story-Spine & Cutaway Blocks
-  els.cutsTrack.innerHTML = '';
+  // 3. Render Assembled Multi-Track Lanes: V1 (Video), V2 (Stills/Ken Burns), FX (Shaders)
+  if (els.cutsTrack) els.cutsTrack.innerHTML = '';
+  if (els.videoTrack) els.videoTrack.innerHTML = '';
+  if (els.stillsTrack) els.stillsTrack.innerHTML = '';
+  if (els.fxTrack) els.fxTrack.innerHTML = '';
+
   const events = (Studio.timeline && Studio.timeline.events) || [];
   const pinnedCount = events.filter((e) => e.pinned).length;
   els.statCuts.textContent = `Cuts: ${events.length}${pinnedCount ? ` (${pinnedCount} 📌)` : ''}`;
 
-  // Allow dropping a clip from the Library directly onto empty timeline track space
-  els.cutsTrack.ondragover = (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-    els.cutsTrack.classList.add('drag-over');
+  // Drag-and-drop handler for timeline tracks
+  const setupTrackDrop = (trackEl, targetTrackType) => {
+    if (!trackEl) return;
+    trackEl.ondragover = (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      trackEl.classList.add('drag-over');
+    };
+    trackEl.ondragleave = (e) => {
+      if (e.target === trackEl) {
+        trackEl.classList.remove('drag-over');
+      }
+    };
+    trackEl.ondrop = async (e) => {
+      if (e.target.closest('.cut-block')) return;
+      e.preventDefault();
+      trackEl.classList.remove('drag-over');
+      const droppedClipId = e.dataTransfer.getData('text/plain');
+      if (!droppedClipId) return;
+      const rect = trackEl.getBoundingClientRect();
+      const dropSec = Math.max(0, (e.clientX - rect.left) / Studio.pxPerSec);
+      const droppedClip = (Studio.clips || []).find((c) => c.id === droppedClipId);
+      const isStill = droppedClip && droppedClip.media_type === 'image';
+      const blockDur = isStill ? getStillDefaultDuration() : 2.5;
+      try {
+        const res = await api('/api/timeline/add-manual-block', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clip_id: droppedClipId, start: Number(dropSec.toFixed(3)), duration: blockDur }),
+        });
+        Studio.timeline = res.timeline;
+        Studio.activeSlotIndex = -1;
+        renderTimelineView();
+        syncVideoDecodersToTime(Studio.audio ? (els.mainAudio.currentTime || 0) : Studio.scratchCurrentTime, true);
+      } catch (err) {
+        alert(`Add block failed: ${err.message}`);
+      }
+    };
   };
-  els.cutsTrack.ondragleave = (e) => {
-    if (e.target === els.cutsTrack) {
-      els.cutsTrack.classList.remove('drag-over');
-    }
-  };
-  els.cutsTrack.ondrop = async (e) => {
-    if (e.target.closest('.cut-block')) return;
-    e.preventDefault();
-    const droppedClipId = e.dataTransfer.getData('text/plain');
-    if (!droppedClipId) return;
-    const rect = els.cutsTrack.getBoundingClientRect();
-    const dropSec = Math.max(0, (e.clientX - rect.left) / Studio.pxPerSec);
-    const droppedClip = Studio.clips.find((c) => c.id === droppedClipId);
-    const isStill = droppedClip && droppedClip.media_type === 'image';
-    const blockDur = isStill ? getStillDefaultDuration() : 2.5;
-    try {
-      const res = await api('/api/timeline/add-manual-block', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clip_id: droppedClipId, start: Number(dropSec.toFixed(3)), duration: blockDur }),
-      });
-      Studio.timeline = res.timeline;
-      Studio.activeSlotIndex = -1;
-      renderTimelineView();
-      syncVideoDecodersToTime(els.mainAudio.currentTime || 0, true);
-    } catch (err) {
-      alert(`Add block failed: ${err.message}`);
-    }
-  };
+
+  setupTrackDrop(els.cutsTrack, 'all');
+  setupTrackDrop(els.videoTrack, 'video');
+  setupTrackDrop(els.stillsTrack, 'image');
 
   if (!events.length) {
     const emptyHint = document.createElement('div');
@@ -1982,19 +2009,62 @@ function renderTimelineView() {
       renderTimelineView();
       openClipInspector(ev.clip_id, idx);
     };
-    els.cutsTrack.appendChild(div);
+
+    // Multi-track routing: images -> V2 stillsTrack, videos -> V1 videoTrack
+    if (ev.media_type === 'image' && els.stillsTrack) {
+      els.stillsTrack.appendChild(div);
+    } else if (els.videoTrack) {
+      els.videoTrack.appendChild(div);
+    } else if (els.cutsTrack) {
+      els.cutsTrack.appendChild(div);
+    }
+
+    // Render active shaders/treatments into FX Lane
+    if (els.fxTrack) {
+      const fxLabel = ev.optical_treatment || (ev.vhs_glitch ? 'GLITCH' : (ev.strobe ? 'STROBE' : ev.style_fx));
+      if (fxLabel && fxLabel !== 'clean') {
+        const fxDiv = document.createElement('div');
+        fxDiv.className = 'fx-badge-block';
+        fxDiv.style.left = `${ev.start * Studio.pxPerSec}px`;
+        fxDiv.style.width = `${Math.max(4, ev.duration * Studio.pxPerSec - 1)}px`;
+        fxDiv.textContent = `✨ ${fxLabel.toUpperCase()}`;
+        fxDiv.title = `FX: ${fxLabel} (${ev.duration.toFixed(2)}s)`;
+        els.fxTrack.appendChild(fxDiv);
+      }
+    }
+  });
+
+  // Track click to seek listeners
+  [els.videoTrack, els.stillsTrack, els.fxTrack].forEach((track) => {
+    if (!track || track._hasClickSeek) return;
+    track._hasClickSeek = true;
+    track.addEventListener('click', (e) => {
+      if (e.target.closest('.cut-block') || e.target.closest('.fx-badge-block')) return;
+      const rect = track.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      seekToTime(x / Studio.pxPerSec);
+    });
   });
   if (Studio.timeline && Studio.timeline.events && Studio.timeline.events.length) {
     triggerWorkspaceAutoSave();
   }
 }
 
-function seekToTime(t) {
-  if (!Studio.audio) return;
-  const clamped = Math.max(0, Math.min(Studio.audio.duration, t));
-  els.mainAudio.currentTime = clamped;
+function seekToTime(t, syncAudio = true) {
+  const dur = (Studio.audio && Studio.audio.duration) || (Studio.timeline && Studio.timeline.total_duration) || 30.0;
+  const clamped = Math.max(0, Math.min(dur, t));
+  Studio.scratchCurrentTime = clamped;
+  if (Studio.audio && els.mainAudio && syncAudio) {
+    els.mainAudio.currentTime = clamped;
+  }
   Studio.activeSlotIndex = -1;
   syncVideoDecodersToTime(clamped, true);
+  if (!Studio.audio) {
+    updateTransportUI();
+    if (els.playheadLine) {
+      els.playheadLine.style.left = `${clamped * Studio.pxPerSec}px`;
+    }
+  }
 }
 
 els.waveformCanvas.addEventListener('click', (e) => {
@@ -4388,8 +4458,181 @@ function gotoEnd() {
   updateTransportUI();
 }
 
+
+// -------------------------------------------------------------
+// SECTION INSERTER TOOL & SCRATCH TIMELINE PLAYBACK
+// -------------------------------------------------------------
+let activeSectionForInsert = null;
+let scratchRaf = null;
+let lastScratchTimestamp = null;
+Studio.scratchCurrentTime = 0;
+
+function openSectionInserterModal(sec) {
+  activeSectionForInsert = sec;
+  const modal = document.getElementById('modalSectionInserter');
+  if (!modal) return;
+  const titleEl = document.getElementById('sectionInserterTitle');
+  const nameEl = document.getElementById('sectionInserterName');
+  const timeEl = document.getElementById('sectionInserterTimeRange');
+  const countEl = document.getElementById('sectionInserterMediaCount');
+
+  const dur = (sec.end - sec.start).toFixed(1);
+  if (titleEl) titleEl.textContent = `⚡ Section Inserter: ${sec.type.toUpperCase()}`;
+  if (nameEl) nameEl.textContent = `${sec.type.toUpperCase()}`;
+  if (timeEl) timeEl.textContent = `${formatTime(sec.start)} → ${formatTime(sec.end)} (${dur}s)`;
+  if (countEl) countEl.textContent = `${Studio.clips ? Studio.clips.length : 0} items available in Library`;
+
+  modal.style.display = 'flex';
+}
+window.openSectionInserterModal = openSectionInserterModal;
+
+function closeSectionInserterModal() {
+  const modal = document.getElementById('modalSectionInserter');
+  if (modal) modal.style.display = 'none';
+  activeSectionForInsert = null;
+}
+window.closeSectionInserterModal = closeSectionInserterModal;
+
+const btnCloseSecIns = document.getElementById('btnCloseSectionInserter');
+if (btnCloseSecIns) btnCloseSecIns.onclick = closeSectionInserterModal;
+const btnCancelSecIns = document.getElementById('btnCancelSectionInsert');
+if (btnCancelSecIns) btnCancelSecIns.onclick = closeSectionInserterModal;
+
+const btnExecSecIns = document.getElementById('btnExecuteSectionInsert');
+if (btnExecSecIns) {
+  btnExecSecIns.onclick = async () => {
+    if (!activeSectionForInsert) return;
+    const mediaType = document.getElementById('sectionInsertMediaType')?.value || 'stills_only';
+    const pacing = document.getElementById('sectionInsertPacing')?.value || 'per_bar';
+    await executeSectionInsert(activeSectionForInsert, mediaType, pacing);
+    closeSectionInserterModal();
+  };
+}
+
+async function executeSectionInsert(sec, mediaType, pacing) {
+  const allClips = Studio.clips || [];
+  if (!allClips.length) {
+    alert('Please load some clips or still images into the Library first.');
+    return;
+  }
+  let eligibleClips = [];
+  if (mediaType === 'stills_only') {
+    eligibleClips = allClips.filter(c => c.media_type === 'image');
+    if (!eligibleClips.length) eligibleClips = allClips;
+  } else if (mediaType === 'video_only') {
+    eligibleClips = allClips.filter(c => c.media_type === 'video');
+    if (!eligibleClips.length) eligibleClips = allClips;
+  } else {
+    eligibleClips = allClips;
+  }
+
+  const secStart = sec.start;
+  const secEnd = sec.end;
+  const secDur = Math.max(1.0, secEnd - secStart);
+
+  // Determine cut duration based on pacing and BPM
+  const bpm = (Studio.audio && Studio.audio.bpm) || 120.0;
+  const beatSec = 60.0 / bpm;
+  let cutDur = 2.0;
+
+  if (pacing === 'per_bar') {
+    cutDur = beatSec * 4.0; // 1 bar in 4/4
+  } else if (pacing === 'per_2bars') {
+    cutDur = beatSec * 8.0; // 2 bars
+  } else if (pacing === 'per_downbeat') {
+    cutDur = beatSec * 1.0;
+  } else if (pacing === 'even_fill') {
+    const count = Math.min(eligibleClips.length, 8);
+    cutDur = secDur / Math.max(1, count);
+  }
+
+  // Generate blocks covering [secStart, secEnd]
+  const newEvents = [];
+  let curT = secStart;
+  let clipIdx = 0;
+
+  while (curT < secEnd - 0.1) {
+    const thisDur = Math.min(cutDur, secEnd - curT);
+    const clip = eligibleClips[clipIdx % eligibleClips.length];
+    const isStill = clip.media_type === 'image';
+    newEvents.push({
+      clip_id: clip.id,
+      clip_filename: clip.filename,
+      clip_path: clip.path,
+      clip_thumbnail: clip.thumbnail,
+      media_type: clip.media_type,
+      ken_burns_preset: isStill ? (clip.ken_burns_preset || 'zoom_in_center') : null,
+      start: Number(curT.toFixed(3)),
+      duration: Number(thisDur.toFixed(3)),
+      in_point: 0,
+      out_point: Number(thisDur.toFixed(3)),
+      role: 'primary_story',
+      pinned: true
+    });
+    curT += thisDur;
+    clipIdx++;
+  }
+
+  // Merge into existing timeline events (replace events inside secStart..secEnd)
+  const existingEvents = (Studio.timeline && Studio.timeline.events) ? Studio.timeline.events : [];
+  const keptEvents = existingEvents.filter(e => e.start < secStart - 0.05 || e.start >= secEnd - 0.05);
+  const mergedEvents = [...keptEvents, ...newEvents].sort((a, b) => a.start - b.start);
+
+  if (!Studio.timeline) {
+    Studio.timeline = { total_duration: (Studio.audio && Studio.audio.duration) || 30.0, events: [] };
+  }
+  Studio.timeline.events = mergedEvents;
+  renderTimelineView();
+  syncVideoDecodersToTime(secStart, true);
+  seekToTime(secStart);
+}
+
+function toggleScratchPlayback() {
+  const dur = (Studio.timeline && Studio.timeline.total_duration) || 30.0;
+  if (Studio.isPlaying) {
+    Studio.isPlaying = false;
+    if (scratchRaf) cancelAnimationFrame(scratchRaf);
+    scratchRaf = null;
+    [els.vidA, els.vidB, els.vidL, els.vidR].forEach((v) => {
+      if (v) try { v.pause(); } catch (_) {}
+    });
+  } else {
+    Studio.isPlaying = true;
+    lastScratchTimestamp = performance.now();
+    if (Studio.scratchCurrentTime >= dur - 0.05) {
+      Studio.scratchCurrentTime = 0;
+    }
+    const activeVid = getActiveDecoderVideo();
+    if (activeVid) activeVid.play().catch(() => {});
+
+    function scratchLoop(now) {
+      if (!Studio.isPlaying) return;
+      const delta = (now - lastScratchTimestamp) / 1000;
+      lastScratchTimestamp = now;
+      Studio.scratchCurrentTime += delta;
+      if (Studio.scratchCurrentTime >= dur) {
+        if (Studio.isLooping) {
+          Studio.scratchCurrentTime = 0;
+        } else {
+          Studio.scratchCurrentTime = dur;
+          Studio.isPlaying = false;
+          updateTransportUI();
+          return;
+        }
+      }
+      seekToTime(Studio.scratchCurrentTime, false);
+      scratchRaf = requestAnimationFrame(scratchLoop);
+    }
+    scratchRaf = requestAnimationFrame(scratchLoop);
+  }
+  updateTransportUI();
+}
+
 function togglePlayPause() {
-  if (!Studio.audio) return;
+  if (!Studio.audio) {
+    toggleScratchPlayback();
+    return;
+  }
 
   if (Studio.isPlaying) {
     if (els.mainAudio) els.mainAudio.pause();

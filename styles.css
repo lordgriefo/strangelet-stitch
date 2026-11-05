@@ -1377,6 +1377,83 @@ input[type="checkbox"] {
   filter: grayscale(0.65);
 }
 
+.timeline-lane-wrap {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-darkest);
+}
+
+.timeline-track-label {
+  position: sticky;
+  left: 0;
+  z-index: 25;
+  width: 42px;
+  min-width: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 17, 23, 0.95);
+  border-right: 1px solid var(--border-color);
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  user-select: none;
+  backdrop-filter: blur(4px);
+}
+
+.fx-track {
+  position: relative;
+  height: 24px;
+  flex: 1;
+  background: rgba(15, 23, 42, 0.85);
+  overflow: hidden;
+}
+
+.video-track {
+  position: relative;
+  height: 60px;
+  flex: 1;
+  background: rgba(10, 14, 20, 0.9);
+}
+
+.video-track.drag-over {
+  background: rgba(56, 189, 248, 0.12) !important;
+  outline: 1px dashed var(--accent-cyan);
+}
+
+.stills-track {
+  position: relative;
+  height: 60px;
+  flex: 1;
+  background: rgba(18, 12, 24, 0.9);
+}
+
+.stills-track.drag-over {
+  background: rgba(192, 132, 252, 0.12) !important;
+  outline: 1px dashed #c084fc;
+}
+
+.fx-badge-block {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  background: rgba(245, 158, 11, 0.25);
+  border: 1px solid rgba(245, 158, 11, 0.6);
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fef08a;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: monospace;
+}
+
 .cuts-track {
   position: relative;
   height: 82px;
