@@ -656,11 +656,41 @@
 
     <div class="timeline-scroll-container" id="timelineScroll">
       <div class="timeline-tracks" id="timelineTracks">
-        <div class="sections-track" id="sectionsTrack"></div>
-        <canvas id="waveformCanvas" height="72"></canvas>
-        <!-- Dedicated Timed Lyrics Lane below the Audio Waveform -->
-        <div class="lyrics-track" id="lyricsTrack"></div>
-        <div class="cuts-track" id="cutsTrack"></div>
+        <!-- Sections Lane (Click any section to launch Section Inserter) -->
+        <div class="sections-track" id="sectionsTrack" title="Song Sections (Click any section to insert media by bars/beats)"></div>
+
+        <!-- FX & Shaders Lane -->
+        <div class="timeline-lane-wrap">
+          <div class="timeline-track-label" title="Visual FX, Shaders & Burroughs Cut-Up Text">FX</div>
+          <div class="fx-track" id="fxTrack" title="Visual FX & Shaders Lane"></div>
+        </div>
+
+        <!-- V1 Video Clips Lane -->
+        <div class="timeline-lane-wrap">
+          <div class="timeline-track-label" style="color:var(--accent-cyan);" title="V1 — Video Clips (Drag video clips here)">V1</div>
+          <div class="video-track" id="videoTrack" title="V1 — Video Clips Lane"></div>
+        </div>
+
+        <!-- V2 Still Images Lane -->
+        <div class="timeline-lane-wrap">
+          <div class="timeline-track-label" style="color:#c084fc;" title="V2 — Still Images & Stems (Ken Burns Motion)">V2</div>
+          <div class="stills-track" id="stillsTrack" title="V2 — Still Images (Ken Burns Motion) Lane"></div>
+        </div>
+
+        <!-- Dedicated Timed Lyrics Lane below the Visuals -->
+        <div class="timeline-lane-wrap">
+          <div class="timeline-track-label" style="color:#34d399;" title="LRC — Timed Lyrics / Subtitles">LRC</div>
+          <div class="lyrics-track" id="lyricsTrack" title="Timed Lyrics Lane"></div>
+        </div>
+
+        <!-- A1 Audio Waveform -->
+        <div class="timeline-lane-wrap">
+          <div class="timeline-track-label" style="color:var(--accent-amber);" title="A1 — Music Waveform & Beat Grid">A1</div>
+          <canvas id="waveformCanvas" height="64"></canvas>
+        </div>
+
+        <!-- Legacy cuts-track container for compatibility -->
+        <div class="cuts-track" id="cutsTrack" style="display:none;"></div>
         <div class="playhead-line" id="playheadLine" style="left:0px;"></div>
       </div>
     </div>
@@ -1592,6 +1622,58 @@
           Strangelet Stitch v1.1 • Press <kbd>Esc</kbd> to return to workspace
         </span>
         <button class="btn btn-primary" id="btnCloseManualBottom">Return to Workspace</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Section Inserter Tool -->
+  <div class="modal-backdrop" id="modalSectionInserter" style="display:none;">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <span id="sectionInserterTitle" style="font-weight:700;color:var(--accent-cyan);font-family:monospace;">⚡ Section Inserter</span>
+        <button class="modal-close" id="btnCloseSectionInserter">✕</button>
+      </div>
+      <div class="modal-body" style="padding:16px;">
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;line-height:1.5;">
+          Populate this musical section with selected library media synchronized to the song's phrasing and tempo.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--text-bright);display:block;margin-bottom:4px;">MEDIA TARGET</label>
+            <select id="sectionInsertMediaType" class="splicer-select" style="width:100%;">
+              <option value="stills_only">🖼️ Stills Only (V2 Lane • Ken Burns Motion)</option>
+              <option value="video_only">🎬 Videos Only (V1 Lane • Audio-Reactive Cuts)</option>
+              <option value="interleaved">⚡ Interleaved (Alternating Video + Still)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--text-bright);display:block;margin-bottom:4px;">CUT PACING / RHYTHMIC PHRASING</label>
+            <select id="sectionInsertPacing" class="splicer-select" style="width:100%;">
+              <option value="per_bar">1 Cut Per Bar (Every 4 Beats)</option>
+              <option value="per_2bars">1 Cut Per 2 Bars (Every 8 Beats)</option>
+              <option value="per_downbeat">1 Cut on Every Downbeat</option>
+              <option value="even_fill">Evenly Distribute Media Across Section Duration</option>
+            </select>
+          </div>
+          <div style="background:rgba(0,0,0,0.35);border:1px solid var(--border-color);border-radius:6px;padding:12px;font-size:11.5px;color:var(--text-main);">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span>Target Section:</span>
+              <strong id="sectionInserterName" style="color:var(--text-bright);">VERSE 1</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span>Time Boundary:</span>
+              <strong id="sectionInserterTimeRange" style="color:var(--accent-amber);font-family:monospace;">0:00 - 0:00 (0.0s)</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span>Available Library Media:</span>
+              <strong id="sectionInserterMediaCount" style="color:var(--accent-cyan);">0 items</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:flex-end;gap:8px;">
+        <button class="btn btn-secondary" id="btnCancelSectionInsert">Cancel</button>
+        <button class="btn btn-primary" id="btnExecuteSectionInsert">⚡ Insert into Section</button>
       </div>
     </div>
   </div>
