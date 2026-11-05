@@ -37,7 +37,7 @@ from .demo_generator import create_synth_demo_track, create_demo_clips
 from .lyric_engine import parse_lyrics_file, generate_demo_lyrics
 
 
-app = FastAPI(title="Strangelet Splicer — AI Audio-Reactive Video Engine")
+app = FastAPI(title="Strangelet Stitch — AI Audio-Reactive Video Engine")
 
 app.add_middleware(
     CORSMiddleware,

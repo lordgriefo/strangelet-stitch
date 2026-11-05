@@ -60,7 +60,7 @@
           <span>New Session</span><span class="menu-shortcut">Ctrl+N</span>
         </div>
         <div class="menu-entry" id="menuActionOpenProject">
-          <span>Open Project (.splicer / .zip)...</span><span class="menu-shortcut">Ctrl+O</span>
+          <span>Open Project (.stitch / .splicer / .zip)...</span><span class="menu-shortcut">Ctrl+O</span>
         </div>
         <div class="menu-entry" id="menuActionSaveProject">
           <span>Save Project</span><span class="menu-shortcut">Ctrl+S</span>
@@ -186,7 +186,7 @@
     <div class="brand">
       <div class="brand-logo">SS</div>
       <div>
-        <div class="brand-title">Strangelet Splicer</div>
+        <div class="brand-title">Strangelet Stitch</div>
         <div class="brand-sub">Story-Spine Sequencer • Full-Clip Preservation • Ken Burns Stills • Universal AI Engine</div>
       </div>
     </div>
@@ -201,7 +201,7 @@
     <!-- Streamlined Header Actions -->
     <div class="header-actions">
       <!-- Hidden file inputs for File Menu actions -->
-      <input type="file" id="openProjectInput" accept=".splicer,.json,.zip,application/zip" hidden />
+      <input type="file" id="openProjectInput" accept=".stitch,.splicer,.json,.zip,application/zip" hidden />
       <input type="file" id="lyricFileInput" accept=".lrc,.srt,.txt" hidden />
 
       <button class="btn btn-emerald btn-sm" id="btnLoadDemo" title="Generate &amp; load demo audio + 8 Story Spine clips/stills + sample LRC lyrics">
@@ -1127,7 +1127,7 @@
           <!-- SECTION 1: WORKFLOW MODES -->
           <section class="manual-section" id="sec-modes">
             <h2 class="manual-sec-title">⚡ 1. Workflow Modes: Preset (Auto Spine) vs. Manual (Workbench)</h2>
-            <p>Strangelet Splicer provides a dedicated two-way <b>Mode Switcher</b> located directly above the timeline to toggle seamlessly between algorithmic montage creation and precision non-linear assembly:</p>
+            <p>Strangelet Stitch provides a dedicated two-way <b>Mode Switcher</b> located directly above the timeline to toggle seamlessly between algorithmic montage creation and precision non-linear assembly:</p>
 
             <div class="manual-grid-2">
               <div class="manual-card-box" style="border-color:rgba(6,182,212,0.4);">
@@ -1212,7 +1212,7 @@
           <!-- SECTION 3: TIMELINE & RIGHT-CLICK ACTIONS -->
           <section class="manual-section" id="sec-timeline-actions">
             <h2 class="manual-sec-title">✂️ 3. Timeline Operations &amp; Right-Click Context Menus</h2>
-            <p>Every element on the Strangelet Splicer timeline supports context-aware right-click inspection and manipulation:</p>
+            <p>Every element on the Strangelet Stitch timeline supports context-aware right-click inspection and manipulation:</p>
 
             <div class="manual-grid-2">
               <div class="manual-card-box">
@@ -1272,7 +1272,7 @@
           <!-- SECTION 5: AVANT-GARDE FX & AUTO-VARY ENGINE -->
           <section class="manual-section" id="sec-fx-shaders">
             <h2 class="manual-sec-title">🎲 5. Avant-Garde FX &amp; Generative Auto-Vary Engine</h2>
-            <p>Strangelet Splicer includes 6 real-time hardware aesthetic shaders and an intelligent generative auto-variation engine:</p>
+            <p>Strangelet Stitch includes 6 real-time hardware aesthetic shaders and an intelligent generative auto-variation engine:</p>
 
             <table class="manual-table">
               <thead>
@@ -1333,7 +1333,7 @@
           <!-- Section 6: Editing Presets & Grammars (25 Styles) -->
           <section class="manual-section" id="sec-presets">
             <h2 class="manual-sec-title">🔮 6. Editing Presets &amp; Film Grammars (25 Styles)</h2>
-            <p>The Splicer engine contains 25 tailored editing grammars categorized into Core, Avant-Garde/Auteur, and Esoteric traditions:</p>
+            <p>The Stitch engine contains 25 tailored editing grammars categorized into Core, Avant-Garde/Auteur, and Esoteric traditions:</p>
 
             <h3 style="color:var(--accent-amber);margin-top:16px;">Core &amp; Commercial Grammars</h3>
             <table class="manual-table">
@@ -1504,7 +1504,7 @@
           <!-- Section 7: Timed Lyrics & Typography -->
           <section class="manual-section" id="sec-lyrics">
             <h2 class="manual-sec-title">📝 7. Timed Lyrics &amp; Kinetic Typography</h2>
-            <p>Strangelet Splicer includes a native <code>.lrc</code> and <code>.srt</code> parser with frame-accurate kinetic typography:</p>
+            <p>Strangelet Stitch includes a native <code>.lrc</code> and <code>.srt</code> parser with frame-accurate kinetic typography:</p>
 
             <div class="manual-grid-2">
               <div class="manual-card-box">
@@ -1585,7 +1585,7 @@
           <!-- Section 9: Offline Tauri Architecture & NLE Round-Trip -->
           <section class="manual-section" id="sec-architecture">
             <h2 class="manual-sec-title">🛠️ 9. Offline Tauri Architecture &amp; NLE Round-Trip</h2>
-            <p>Strangelet Splicer is architected to run with 100% offline autonomy:</p>
+            <p>Strangelet Stitch is architected to run with 100% offline autonomy:</p>
             <ul class="manual-list">
               <li><b>Native FFmpeg Sidecar:</b> Bundled inside <code>src-tauri/binaries/ffmpeg-x86_64-pc-windows-msvc.exe</code>, eliminating any requirement for external system FFmpeg installs.</li>
               <li><b>Zero Cloud Lock-in:</b> DSP analysis (BPM, downbeats, Kick/Snare envelopes) and OpenCV rendering run on your local machine with cache directories mapped to <code>D:\mv-auto-e\.cache\tmp</code>.</li>
@@ -1599,14 +1599,14 @@
 
       <div class="modal-footer" style="justify-content:space-between;">
         <span style="font-family:var(--font-ui);font-size:10.5px;color:var(--text-muted);">
-          Strangelet Splicer v1.1 • Press <kbd>Esc</kbd> to return to workspace
+          Strangelet Stitch v1.1 • Press <kbd>Esc</kbd> to return to workspace
         </span>
         <button class="btn btn-primary" id="btnCloseManualBottom">Return to Workspace</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal: About Strangelet Splicer -->
+  <!-- Modal: About Strangelet Stitch -->
   <div class="modal-backdrop" id="modalAbout" style="display:none;">
     <div class="modal-box" style="max-width:520px;">
       <div class="modal-header">
@@ -1621,7 +1621,7 @@
       </div>
       <div class="modal-body" style="padding:16px;font-size:12.5px;color:var(--text-main);line-height:1.6;">
         <p style="margin-top:0;">
-          <b>Strangelet Splicer</b> is a high-speed, audio-reactive story-spine video sequencer and montage editor engineered for musicians, visual artists, and experimental filmmakers.
+          <b>Strangelet Stitch</b> is a high-speed, audio-reactive story-spine video sequencer and montage editor engineered for musicians, visual artists, and experimental filmmakers.
         </p>
         <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border-color);border-radius:6px;padding:12px;margin:12px 0;font-family:var(--font-ui);font-size:11px;">
           <div style="color:var(--accent-amber);font-weight:700;margin-bottom:6px;">ENGINE ARCHITECTURE</div>

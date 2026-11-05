@@ -3661,7 +3661,7 @@ if (els.btnSaveProject) {
             ? Studio.audio.filename.replace(/\.[^/.]+$/, '')
             : 'strangelet_project');
       a.href = url;
-      a.download = `${baseName}_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.splicer`;
+      a.download = `${baseName}_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.stitch`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -7361,7 +7361,7 @@ async function executeMenuAction(actionId, entryEl) {
       break;
     }
     case 'menuActionExit':
-      if (Studio.hasUnsavedChanges && !confirm('You have unsaved changes. Exit Strangelet Splicer anyway?')) {
+      if (Studio.hasUnsavedChanges && !confirm('You have unsaved changes. Exit Strangelet Stitch anyway?')) {
         return;
       }
       if (isTauriEnvironment() && window.__TAURI__?.window) {
@@ -7451,7 +7451,7 @@ async function executeMenuAction(actionId, entryEl) {
       openAboutModal();
       break;
     case 'menuActionCheckUpdates':
-      alert('Strangelet Splicer v1.1.0\n\nYou are running the latest standalone offline build.\nZero cloud dependencies or mandatory telemetry.');
+      alert('Strangelet Stitch v1.1.0\n\nYou are running the latest standalone offline build.\nZero cloud dependencies or mandatory telemetry.');
       break;
   }
 }
