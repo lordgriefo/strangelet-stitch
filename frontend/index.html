@@ -12,19 +12,8 @@
 <body>
 
   <!-- Strangelet Stitch Cinematic Opening Splash Screen -->
-  <div id="strangeletSplash" class="strangelet-splash" onclick="dismissSplash()">
-    <div class="splash-vignette"></div>
-    <div class="splash-scanlines"></div>
-    <div class="splash-container">
-      <div class="splash-moon-ring">
-        <img src="./assets/melies-moon.gif" alt="Georges Méliès Man in the Moon" class="splash-moon-asset" id="splashMoonImg" onerror="this.src='./assets/melies-moon.png'" />
-      </div>
-      <div class="splash-title-wrap">
-        <h1 class="splash-brand-title">STRANGELET STITCH</h1>
-        <div class="splash-line"></div>
-      </div>
-    </div>
-    <div class="splash-skip-pill">CLICK OR PRESS ANY KEY TO ENTER</div>
+  <div id="strangeletSplash" class="strangelet-splash" style="position:fixed;inset:0;z-index:99999;background:#020306;transition:opacity 0.8s ease;">
+    <iframe id="splashCinematicFrame" src="./opening_cinematic.html" style="width:100%;height:100%;border:none;position:absolute;inset:0;display:block;"></iframe>
   </div>
 
   <script>
@@ -35,18 +24,19 @@
         dismissed = true;
         const splash = document.getElementById('strangeletSplash');
         if (splash) {
-          splash.classList.add('splash-dismissed');
+          splash.style.opacity = '0';
+          splash.style.pointerEvents = 'none';
           setTimeout(() => { splash.style.display = 'none'; }, 800);
         }
         window.removeEventListener('keydown', onKey);
       }
       window.dismissSplash = dismissSplash;
       function onKey(e) {
-        dismissSplash();
+        if (e.code === 'Escape' || e.code === 'Space') dismissSplash();
       }
       window.addEventListener('keydown', onKey);
-      // Auto-dismiss smoothly after 2.8s
-      setTimeout(dismissSplash, 2800);
+      // Auto-dismiss smoothly after full 7.8s cinematic has played
+      setTimeout(dismissSplash, 7800);
     })();
   </script>
 

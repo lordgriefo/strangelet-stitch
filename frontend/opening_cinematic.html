@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Strangelet Stitch — Cinematic Opening</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #020306;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      user-select: none;
+    }
+    #stage {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: block;
+    }
+    .hud {
+      position: absolute;
+      bottom: 24px;
+      right: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 50;
+      font-size: 11px;
+      letter-spacing: 0.8px;
+      color: rgba(226, 232, 240, 0.6);
+      font-family: monospace;
+    }
+    .hud-btn {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      letter-spacing: 1px;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+    .hud-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: #38bdf8;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      z-index: 40;
+    }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <canvas id="c"></canvas>
+    <div class="scanlines"></div>
+    <div class="hud">
+      <button class="hud-btn" id="btnReplay">↺ Replay</button>
+      <span>Press <kbd style="background:#1e293b;padding:2px 5px;border-radius:3px;">ESC</kbd> or Click to Continue</span>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    let W, H, CX, CY;
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      CX = W / 2;
+      CY = H / 2 - 20;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Assets
+    const moonImg = new Image();
+    moonImg.src = 'assets/melies_moon_isolated.png';
+    const cloudsImg = new Image();
+    cloudsImg.src = 'assets/melies_clouds_border.png';
+
+    // Stars
+    const NUM_STARS = 240;
+    const stars = [];
+    for (let i = 0; i < NUM_STARS; i++) {
+      stars.push({
+        x: (Math.random() - 0.5) * 2000,
+        y: (Math.random() - 0.5) * 2000,
+        z: Math.random() * 1500 + 100,
+        sz: Math.random() * 1.8 + 0.4,
+        twinkle: Math.random() * Math.PI * 2,
+        twSpeed: Math.random() * 0.05 + 0.02,
+        hue: Math.random() > 0.8 ? 200 : (Math.random() > 0.9 ? 35 : 0)
+      });
+    }
+
+    // Sparks / Embers
+    const NUM_SPARKS = 45;
+    const sparks = [];
+    for (let i = 0; i < NUM_SPARKS; i++) {
+      sparks.push({
+        x: (Math.random() - 0.5) * 1200,
+        y: Math.random() * 800,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: -Math.random() * 1.6 - 0.4,
+        sz: Math.random() * 2.2 + 0.8,
+        life: Math.random(),
+        fade: Math.random() * 0.008 + 0.004
+      });
+    }
+
+    // Sacred Geometry Assembly Parts
+    // Vesica Piscis twin circles + Tree of Life nodes & paths
+    // Nodes for Tree of Life (normalized coords relative to scale R=160)
+    const sephirothNodes = [
+      { name: "Kether", x: 0, y: -135 },
+      { name: "Chokmah", x: 75, y: -95 },
+      { name: "Binah", x: -75, y: -95 },
+      { name: "Chesed", x: 75, y: -25 },
+      { name: "Geburah", x: -75, y: -25 },
+      { name: "Tiphereth", x: 0, y: 15 },
+      { name: "Netzach", x: 75, y: 85 },
+      { name: "Hod", x: -75, y: 85 },
+      { name: "Yesod", x: 0, y: 115 },
+      { name: "Malkuth", x: 0, y: 175 }
+    ];
+
+    const sephirothPaths = [
+      [0, 1], [0, 2], [1, 2],
+      [1, 3], [1, 5],
+      [2, 4], [2, 5],
+      [3, 4], [3, 5], [3, 6],
+      [4, 5], [4, 7],
+      [5, 6], [5, 7], [5, 8],
+      [6, 7], [6, 8], [6, 9],
+      [7, 8], [7, 9],
+      [8, 9]
+    ];
+
+    // Flying parts: 2 large circles, 10 nodes, 21 paths, plus 12 orbiting gear/bracket fragments
+    const parts = [];
+
+    // Left Circle
+    parts.push({
+      type: 'circle',
+      targetX: -80, targetY: 20, r: 160,
+      x: -600, y: -400, z: -800, rot: -2, rotSpeed: 0.02,
+      assembleStart: 1.2, assembleEnd: 3.2
+    });
+    // Right Circle
+    parts.push({
+      type: 'circle',
+      targetX: 80, targetY: 20, r: 160,
+      x: 600, y: 400, z: -800, rot: 2, rotSpeed: -0.02,
+      assembleStart: 1.2, assembleEnd: 3.2
+    });
+
+    // Sephiroth Nodes
+    sephirothNodes.forEach((n, idx) => {
+      const angle = (idx / 10) * Math.PI * 2;
+      parts.push({
+        type: 'node',
+        targetX: n.x, targetY: n.y + 20, r: 11,
+        x: Math.cos(angle) * 800,
+        y: Math.sin(angle) * 800,
+        z: -1200 + Math.random() * 400,
+        rot: Math.random() * 4,
+        assembleStart: 2.2 + idx * 0.1,
+        assembleEnd: 4.0
+      });
+    });
+
+    // Mechanical gear/bracket accents
+    for (let k = 0; k < 12; k++) {
+      const ang = (k / 12) * Math.PI * 2;
+      parts.push({
+        type: 'bracket',
+        targetX: Math.cos(ang) * 160 + (k % 2 === 0 ? -80 : 80),
+        targetY: Math.sin(ang) * 160 + 20,
+        sz: 14,
+        x: (Math.random() - 0.5) * 1400,
+        y: (Math.random() - 0.5) * 1000,
+        z: -1000,
+        assembleStart: 1.8 + k * 0.1,
+        assembleEnd: 3.8
+      });
+    }
+
+    // Stitching Suture Points along the Vesica Piscis Almond Perimeter
+    // Almond top is at (0, -118), bottom is at (0, 158)
+    const stitchPoints = [];
+    const NUM_STITCHES = 26;
+    for (let s = 0; s <= NUM_STITCHES; s++) {
+      const t = s / NUM_STITCHES;
+      // Parametric almond contour
+      const angle = (t - 0.5) * Math.PI * 0.95;
+      const y = 20 + Math.sin(angle) * 140;
+      // Arc radius R=160 centered at x = -80 (right curve) and x = 80 (left curve)
+      const xRight = -80 + Math.sqrt(Math.max(0, 160*160 - (y - 20)*(y - 20)));
+      const xLeft = 80 - Math.sqrt(Math.max(0, 160*160 - (y - 20)*(y - 20)));
+      
+      // Zigzag across almond seams: alternate between left edge and right edge with inward cross
+      const isRight = s % 2 === 0;
+      stitchPoints.push({
+        t: t,
+        x1: isRight ? xRight : xLeft,
+        y1: y,
+        x2: isRight ? xLeft - 10 : xRight + 10,
+        y2: y + (isRight ? 12 : -12)
+      });
+    }
+
+    // Animation Time Control
+    let startTime = performance.now();
+    let animRunning = true;
+
+    function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+    function easeInOutQuad(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+    function easeOutElastic(x) {
+      const c4 = (2 * Math.PI) / 3;
+      return x === 0 ? 0 : x === 1 ? 1 : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
+    }
+
+    function render(now) {
+      const elapsed = (now - startTime) / 1000; // in seconds
+
+      ctx.fillStyle = '#020306';
+      ctx.fillRect(0, 0, W, H);
+
+      // 1. STARFIELD (Drifting and Parallax Depth)
+      ctx.save();
+      for (let s of stars) {
+        s.twinkle += s.twSpeed;
+        const tw = Math.sin(s.twinkle) * 0.35 + 0.65;
+        // Project 3D star to 2D
+        const fov = 450;
+        const depth = s.z - (elapsed * 25) % 1500;
+        const dNorm = depth <= 0 ? depth + 1500 : depth;
+        const sx = CX + (s.x / dNorm) * fov;
+        const sy = CY + (s.y / dNorm) * fov;
+        const size = s.sz * (1 - dNorm / 1600) * 1.5;
+
+        if (sx >= 0 && sx < W && sy >= 0 && sy < H) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, Math.max(0.3, size), 0, Math.PI * 2);
+          if (s.hue === 200) {
+            ctx.fillStyle = `rgba(186, 230, 253, ${tw * 0.9})`;
+          } else if (s.hue === 35) {
+            ctx.fillStyle = `rgba(253, 224, 71, ${tw * 0.8})`;
+          } else {
+            ctx.fillStyle = `rgba(255, 255, 255, ${tw * 0.85})`;
+          }
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+
+      // 2. SPARKS / EMBERS
+      ctx.save();
+      for (let sp of sparks) {
+        sp.y += sp.vy;
+        sp.x += sp.vx;
+        sp.life -= sp.fade;
+        if (sp.life <= 0) {
+          sp.life = 1;
+          sp.y = H * 0.7 + Math.random() * 200;
+          sp.x = (Math.random() - 0.5) * 800;
+        }
+        const px = CX + sp.x;
+        const py = sp.y;
+        ctx.beginPath();
+        ctx.arc(px, py, sp.sz * sp.life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(251, 146, 60, ${sp.life * 0.6})`;
+        ctx.shadowColor = '#f97316';
+        ctx.shadowBlur = 6;
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // 3. MOON GLIDING FROM DISTANCE (Background -> Almond Core)
+      // Duration: 0s to 5.5s
+      const moonProgress = Math.min(1.0, elapsed / 5.2);
+      const moonScale = 0.02 + easeOutCubic(moonProgress) * 0.44; // Scale up to 0.46
+      const moonAlpha = Math.min(1.0, elapsed * 0.8);
+      const moonGlow = Math.sin(elapsed * 2.5) * 8 + 18;
+
+      ctx.save();
+      ctx.translate(CX, CY + 20);
+      if (moonImg.complete && moonImg.naturalWidth) {
+        ctx.save();
+        ctx.globalAlpha = moonAlpha;
+        // Soft aura behind moon
+        const auraGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 240 * moonScale);
+        auraGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+        auraGrad.addColorStop(0.5, 'rgba(30, 58, 138, 0.25)');
+        auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = auraGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, 240 * moonScale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Moon sprite
+        const mw = moonImg.naturalWidth * moonScale;
+        const mh = moonImg.naturalHeight * moonScale;
+        ctx.drawImage(moonImg, -mw / 2, -mh / 2, mw, mh);
+        ctx.restore();
+      }
+      ctx.restore();
+
+      // 4. MECHANICAL SACRED GEOMETRY ASSEMBLY
+      ctx.save();
+      ctx.translate(CX, CY);
+
+      // Render Tree of Life Pathways (fade and draw when nodes arrive: 2.8s -> 4.5s)
+      if (elapsed > 2.6) {
+        const pathProgress = Math.min(1.0, (elapsed - 2.6) / 1.6);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${pathProgress * 0.85})`;
+        ctx.lineWidth = 1.6;
+        ctx.shadowColor = 'rgba(56, 189, 248, 0.8)';
+        ctx.shadowBlur = 8;
+
+        for (let p of sephirothPaths) {
+          const n1 = sephirothNodes[p[0]];
+          const n2 = sephirothNodes[p[1]];
+          ctx.beginPath();
+          ctx.moveTo(n1.x, n1.y + 20);
+          // Animate line stroke
+          const curX = n1.x + (n2.x - n1.x) * pathProgress;
+          const curY = (n1.y + 20) + ((n2.y + 20) - (n1.y + 20)) * pathProgress;
+          ctx.lineTo(curX, curY);
+          ctx.stroke();
+        }
+      }
+
+      // Render Animated Parts (Circles, Nodes, Brackets)
+      for (let pt of parts) {
+        const pProg = Math.max(0, Math.min(1.0, (elapsed - pt.assembleStart) / (pt.assembleEnd - pt.assembleStart)));
+        const eased = easeOutCubic(pProg);
+
+        const curX = pt.x + (pt.targetX - pt.x) * eased;
+        const curY = pt.y + (pt.targetY - pt.y) * eased;
+        const curAlpha = Math.min(1.0, pProg * 1.5);
+
+        ctx.save();
+        ctx.translate(curX, curY);
+        ctx.globalAlpha = curAlpha;
+
+        if (pt.type === 'circle') {
+          // Vesica Piscis Ring
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2.2;
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.arc(0, 0, pt.r, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // Subtle concentric inner mechanical dash ring
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+          ctx.lineWidth = 1.0;
+          ctx.setLineDash([4, 6]);
+          ctx.beginPath();
+          ctx.arc(0, 0, pt.r - 12, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        } else if (pt.type === 'node') {
+          // Sephiroth Node Sphere
+          ctx.fillStyle = '#0f172a';
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2.0;
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.arc(0, 0, pt.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // Central glowing seed
+          ctx.fillStyle = '#38bdf8';
+          ctx.beginPath();
+          ctx.arc(0, 0, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (pt.type === 'bracket') {
+          // Esoteric mechanical corner bracket
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+          ctx.lineWidth = 1.2;
+          ctx.strokeRect(-pt.sz/2, -pt.sz/2, pt.sz, pt.sz);
+        }
+        ctx.restore();
+      }
+
+      // 5. THE CLIMAX: KINETIC SUTURE / "STRANGELET STITCH"
+      // Triggers between 4.8s and 6.6s
+      if (elapsed > 4.6) {
+        const stitchElapsed = elapsed - 4.6;
+        const stitchTotal = 1.8;
+        const stitchRatio = Math.min(1.0, stitchElapsed / stitchTotal);
+        const activeStitchCount = Math.floor(stitchRatio * NUM_STITCHES);
+
+        ctx.save();
+        ctx.lineWidth = 2.4;
+        ctx.shadowColor = '#06b6d4';
+        ctx.shadowBlur = 12;
+
+        for (let s = 0; s < activeStitchCount; s++) {
+          const pt = stitchPoints[s];
+          // Alternating electric suture thread
+          const threadAlpha = 0.85 + Math.sin(now * 0.02 + s) * 0.15;
+          ctx.strokeStyle = (s % 2 === 0) ? `rgba(6, 182, 212, ${threadAlpha})` : `rgba(251, 191, 36, ${threadAlpha})`;
+
+          ctx.beginPath();
+          ctx.moveTo(pt.x1, pt.y1);
+          ctx.lineTo(pt.x2, pt.y2);
+          ctx.stroke();
+
+          // Stitch knot anchor pins
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(pt.x1, pt.y1, 2.5, 0, Math.PI * 2);
+          ctx.arc(pt.x2, pt.y2, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Kinetic Active Suture Needle Spark at current leading stitch
+        if (activeStitchCount < NUM_STITCHES) {
+          const leadPt = stitchPoints[activeStitchCount];
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 20;
+          ctx.beginPath();
+          ctx.arc(leadPt.x1, leadPt.y1, 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Suture arc beam
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(leadPt.x1, leadPt.y1);
+          ctx.lineTo(leadPt.x2, leadPt.y2);
+          ctx.stroke();
+        } else {
+          // Stitch completion pulse / shockwave
+          const pulseT = (elapsed - 6.4);
+          if (pulseT > 0 && pulseT < 1.0) {
+            ctx.strokeStyle = `rgba(56, 189, 248, ${1 - pulseT})`;
+            ctx.lineWidth = 3 * (1 - pulseT);
+            ctx.beginPath();
+            ctx.ellipse(0, 20, 160 * (1 + pulseT * 0.3), 160 * (1 + pulseT * 0.3), 0, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+      }
+
+      // 6. TITLE REVEAL: "STRANGELET STITCH"
+      if (elapsed > 5.5) {
+        const titleProgress = Math.min(1.0, (elapsed - 5.5) / 1.0);
+        const titleEased = easeOutCubic(titleProgress);
+
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Main Title
+        ctx.font = '900 36px "Cinzel", "Times New Roman", Georgia, serif';
+        ctx.letterSpacing = '10px';
+        ctx.fillStyle = `rgba(255, 255, 255, ${titleEased})`;
+        ctx.shadowColor = 'rgba(56, 189, 248, 0.7)';
+        ctx.shadowBlur = 16;
+        ctx.fillText("STRANGELET STITCH", 0, 230);
+
+        // Subtitle
+        ctx.font = '600 11px monospace';
+        ctx.letterSpacing = '4px';
+        ctx.fillStyle = `rgba(148, 163, 184, ${titleEased * 0.8})`;
+        ctx.shadowBlur = 0;
+        ctx.fillText("AUDIO-REACTIVE STORY-SPINE SEQUENCER", 0, 264);
+
+        ctx.restore();
+      }
+
+      ctx.restore(); // end CX, CY transform
+
+      // 7. BORDER VIGNETTE: SWIRLING INDIGO MÉLIÈS CLOUDS
+      if (cloudsImg.complete && cloudsImg.naturalWidth) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 0.94;
+        ctx.drawImage(cloudsImg, 0, 0, W, H);
+        ctx.restore();
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+
+    document.getElementById('btnReplay').onclick = (e) => {
+      e.stopPropagation();
+      startTime = performance.now();
+    };
+
+    // Skip to main editor on click or key
+    function dismiss() {
+      if (window.parent && window.parent !== window && window.parent.dismissSplash) {
+        window.parent.dismissSplash();
+      }
+    }
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Escape' || e.code === 'Space') dismiss();
+    });
+    canvas.addEventListener('click', dismiss);
+  </script>
+</body>
+</html>
