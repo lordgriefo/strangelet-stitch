@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Strangelet Stitch — Video Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel+Decorative:wght@700&family=Major+Mono+Display&family=Rubik+Glitch&family=Space+Grotesk:wght@700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Syne+Mono&family=UnifrakturMaguntia&family=VT323&display=swap">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <!-- Strangelet Stitch Cinematic Opening Splash Screen -->
+  <div id="strangeletSplash" class="strangelet-splash" onclick="dismissSplash()">
+    <div class="splash-vignette"></div>
+    <div class="splash-scanlines"></div>
+    <div class="splash-container">
+      <div class="splash-moon-ring">
+        <img src="./assets/melies-moon.gif" alt="Georges Méliès Man in the Moon" class="splash-moon-asset" id="splashMoonImg" onerror="this.src='./assets/melies-moon.png'" />
+      </div>
+      <div class="splash-title-wrap">
+        <h1 class="splash-brand-title">STRANGELET STITCH</h1>
+        <div class="splash-line"></div>
+      </div>
+    </div>
+    <div class="splash-skip-pill">CLICK OR PRESS ANY KEY TO ENTER</div>
+  </div>
+
+  <script>
+    (function() {
+      let dismissed = false;
+      function dismissSplash() {
+        if (dismissed) return;
+        dismissed = true;
+        const splash = document.getElementById('strangeletSplash');
+        if (splash) {
+          splash.classList.add('splash-dismissed');
+          setTimeout(() => { splash.style.display = 'none'; }, 800);
+        }
+        window.removeEventListener('keydown', onKey);
+      }
+      window.dismissSplash = dismissSplash;
+      function onKey(e) {
+        dismissSplash();
+      }
+      window.addEventListener('keydown', onKey);
+      // Auto-dismiss smoothly after 2.8s
+      setTimeout(dismissSplash, 2800);
+    })();
+  </script>
+
+
+  <!-- Desktop Windows Menu Bar (File, Edit, View, Help) -->
+  <div class="desktop-menu-bar" id="desktopMenuBar">
+    <div class="menu-dropdown menu-item-dropdown" data-menu="file">
+      <button type="button" class="menu-btn" id="menuBtnFile">File</button>
+      <div class="menu-content menu-dropdown-menu dropdown-menu" id="menuDropdownFile">
+        <div class="menu-entry" id="menuActionNewSession">
+          <span>New Session</span><span class="menu-shortcut">Ctrl+N</span>
+        </div>
+        <div class="menu-entry" id="menuActionOpenProject">
+          <span>Open Project (.splicer / .zip)...</span><span class="menu-shortcut">Ctrl+O</span>
+        </div>
+        <div class="menu-entry" id="menuActionSaveProject">
+          <span>Save Project</span><span class="menu-shortcut">Ctrl+S</span>
+        </div>
+        <div class="menu-entry" id="menuActionExportBundle">
+          <span>📦 Export Project Bundle (.zip)...</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-entry" id="menuActionLoadDemo">
+          <span>⚡ Load Demo Project</span><span class="menu-shortcut">F5</span>
+        </div>
+        <div class="menu-entry" id="menuActionImportLyrics">
+          <span>Import Lyrics (.lrc / .srt)...</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-entry" id="menuActionExportMp4">
+          <span>🎬 Export Final MP4...</span><span class="menu-shortcut">Ctrl+E</span>
+        </div>
+        <div class="menu-entry" id="menuActionExportDraft">
+          <span>⚡ Export Quick Draft</span>
+        </div>
+        <div class="menu-entry" id="menuActionExportNle">
+          <span>🎞️ Export XML / EDL</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-entry" id="menuActionExit">
+          <span>Exit</span><span class="menu-shortcut">Alt+F4</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-dropdown menu-item-dropdown" data-menu="edit">
+      <button type="button" class="menu-btn" id="menuBtnEdit">Edit</button>
+      <div class="menu-content menu-dropdown-menu dropdown-menu" id="menuDropdownEdit">
+        <div class="menu-entry" id="menuActionUndo">
+          <span>Undo</span><span class="menu-shortcut">Ctrl+Z</span>
+        </div>
+        <div class="menu-entry" id="menuActionRedo">
+          <span>Redo</span><span class="menu-shortcut">Ctrl+Y</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-entry" id="menuActionCutBlock">
+          <span>Cut Block</span><span class="menu-shortcut">Ctrl+X</span>
+        </div>
+        <div class="menu-entry" id="menuActionCopyBlock">
+          <span>Copy Block</span><span class="menu-shortcut">Ctrl+C</span>
+        </div>
+        <div class="menu-entry disabled" id="menuActionPasteBlock">
+          <span>Paste Block at Playhead</span><span class="menu-shortcut">Ctrl+V</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-entry" id="menuActionSplit">
+          <span>Razor Split at Playhead</span><span class="menu-shortcut">S / C</span>
+        </div>
+        <div class="menu-entry" id="menuActionClearCuts">
+          <span>Clear All Cuts (Empty Slate)</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-entry" id="menuActionAiBridge">
+          <span>🧠 Universal AI Vision Bridge...</span>
+        </div>
+        <div class="menu-entry" id="menuActionAiSettings">
+          <span>🤖 AI Providers &amp; Keys (Preferences)...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-dropdown menu-item-dropdown" data-menu="view">
+      <button type="button" class="menu-btn" id="menuBtnView">View</button>
+      <div class="menu-content menu-dropdown-menu dropdown-menu" id="menuDropdownView">
+        <div class="menu-entry" id="menuActionToggleFullscreen">
+          <span>Toggle Fullscreen Viewport</span><span class="menu-shortcut">F11 / F</span>
+        </div>
+        <div class="menu-entry" id="menuActionToggleHud">
+          <span id="menuLabelToggleHud">Toggle HUD Readout</span><span class="menu-shortcut">H</span>
+        </div>
+        <div class="menu-entry" id="menuActionToggleLiveFx">
+          <span id="menuLabelToggleLiveFx">Toggle Live Audio-Reactive FX</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-entry" id="menuActionZoomIn">
+          <span>Zoom In Timeline</span><span class="menu-shortcut">Ctrl+=</span>
+        </div>
+        <div class="menu-entry" id="menuActionZoomOut">
+          <span>Zoom Out Timeline</span><span class="menu-shortcut">Ctrl+-</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-dropdown menu-item-dropdown" data-menu="help">
+      <button type="button" class="menu-btn" id="menuBtnHelp">Help</button>
+      <div class="menu-content menu-dropdown-menu dropdown-menu" id="menuDropdownHelp">
+        <div class="menu-entry" id="menuActionFieldManual">
+          <span>📖 Field Manual &amp; Shortcuts</span><span class="menu-shortcut">F1</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-entry" id="menuActionAbout">
+          <span>About Strangelet Stitch</span>
+        </div>
+        <div class="menu-entry" id="menuActionCheckUpdates">
+          <span>Check for Updates...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-bar-spacer"></div>
+
+    <!-- Project Title / Name Input -->
+    <div style="display:inline-flex;align-items:center;gap:6px;margin-right:8px;">
+      <span style="font-size:10px;color:var(--text-muted);font-weight:600;letter-spacing:0.02em;">PROJECT:</span>
+      <input type="text" id="projectTitleInput" class="project-title-input" value="Untitled Project" placeholder="Untitled Project" title="Current Project Title" />
+    </div>
+
+    <!-- Amber LED Auto-Save Status Indicator -->
+    <div class="save-led-wrap" id="saveLedWrap" title="Session State Auto-Save Status">
+      <span class="save-led saved" id="saveLed"></span>
+      <span class="save-led-text" id="saveLedText">SAVED</span>
+    </div>
+  </div>
+
+  <!-- Top Studio Header -->
+  <header class="studio-header">
+    <div class="brand">
+      <div class="brand-logo">SS</div>
+      <div>
+        <div class="brand-title">Strangelet Splicer</div>
+        <div class="brand-sub">Story-Spine Sequencer • Full-Clip Preservation • Ken Burns Stills • Universal AI Engine</div>
+      </div>
+    </div>
+
+    <!-- Local Drive Path Quick Ingest (Recursive) -->
+    <div class="local-ingest-bar" title="Paste any folder or file path on D:, E:, F: to recursively import all videos, images, or audio">
+      <span style="font-size:11px;color:var(--text-muted);font-weight:600;">Recursive Drive Path:</span>
+      <input type="text" id="localPathInput" placeholder="e.g. F:\mp4 or F:\IMIJ-Z-VIDZZEO" />
+      <button class="btn btn-sm btn-accent" id="btnIngestLocalPath">Scan &amp; Import</button>
+    </div>
+
+    <!-- Streamlined Header Actions -->
+    <div class="header-actions">
+      <!-- Hidden file inputs for File Menu actions -->
+      <input type="file" id="openProjectInput" accept=".splicer,.json,.zip,application/zip" hidden />
+      <input type="file" id="lyricFileInput" accept=".lrc,.srt,.txt" hidden />
+
+      <button class="btn btn-emerald btn-sm" id="btnLoadDemo" title="Generate &amp; load demo audio + 8 Story Spine clips/stills + sample LRC lyrics">
+        ⚡ Load Demo
+      </button>
+      <button class="btn btn-accent btn-sm" id="btnOpenWebBridge" title="Universal AI Engine &amp; Vision Contact-Sheet Bridge">
+        🧠 AI Bridge
+      </button>
+      <button class="btn btn-sm btn-accent" id="field-manual-btn" data-alias="btnOpenManual" title="Open Field Manual &amp; Comprehensive User Guide (F1)">
+        📖 Field Manual
+      </button>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Studio Workspace -->
+  <main class="studio-main">
+
+    <!-- LEFT PANEL: Priority #1 — AI Clip & Still Library + Story Spine + Recursive Folder Import -->
+    <section class="panel">
+      <div class="panel-header">
+        <span>1. AI Media Library (<span id="clipCountBadge">0</span>)</span>
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-sm" id="btnReanalyzeAll" title="Re-run AI vision tagging on all media">🔄 Re-Tag</button>
+          <label class="btn btn-sm btn-accent" style="cursor:pointer;" title="Recursively import all videos & images from a folder and its subfolders">
+            📂 Import Folder
+            <input type="file" id="folderFileInput" webkitdirectory directory multiple hidden />
+          </label>
+          <label class="btn btn-sm btn-primary" style="cursor:pointer;" title="Add individual video clips (.mp4, .webm, .mov) or still images (.png, .jpg, .webp)">
+            + Media
+            <input type="file" id="clipFileInput" accept="video/*,image/png,image/jpeg,image/webp" multiple hidden />
+          </label>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <!-- Audio Track Dropzone -->
+        <label class="dropzone" id="audioDropzone">
+          <div style="font-weight:700;color:var(--accent);margin-bottom:3px;" id="audioTrackLabel">
+            🎵 Drop Music Track (.mp3, .wav, .flac)
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);" id="audioStatsLabel">
+            Extracts BPM, Downbeats, Kick/Snare Stems & Energy-Arc Sections
+          </div>
+          <input type="file" id="audioFileInput" accept="audio/*,video/mp4" hidden />
+        </label>
+
+        <!-- Bay 1: 🎬 Video Clips -->
+        <div class="media-bay" id="videoMediaBay">
+          <div class="media-bay-header">
+            <div class="media-bay-title">
+              🎬 Video Clips (<span id="videoCountBadge">0</span>)
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;">
+              <button type="button" class="clear-bay-btn" id="btn-clear-videos" title="Clear all loaded video clips">🗑 Clear Videos</button>
+              <label class="btn btn-sm btn-primary" id="import-videos-btn" style="cursor:pointer;" title="Import video clips (.mp4, .mov, .webm)">
+                + Import Videos
+                <input type="file" id="videoFileInput" accept="video/mp4,video/webm,video/quicktime,video/*,.mp4,.webm,.mov" multiple hidden />
+              </label>
+            </div>
+          </div>
+
+          <!-- Video Drag & Drop Target -->
+          <div class="dropzone dropzone-bay" id="videoDropzone">
+            <div id="drop-video-clips" style="font-weight:700;color:var(--accent-cyan);font-size:11px;">
+              📥 Drop Video Clips (.mp4, .mov, .webm)
+            </div>
+            <div style="font-size:10px;color:var(--text-muted);">
+              Supports H.264, ProRes, & WebM (VP8/VP9/AV1)
+            </div>
+          </div>
+
+          <!-- Video Clips List -->
+          <div id="videoLibraryList" class="media-library-sublist">
+            <div class="empty-bay-hint">No video clips loaded.</div>
+          </div>
+        </div>
+
+        <!-- Bay 2: 🖼️ Still Images -->
+        <div class="media-bay" id="stillMediaBay">
+          <div class="media-bay-header">
+            <div class="media-bay-title">
+              🖼️ Still Images (<span id="stillCountBadge">0</span>)
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;">
+              <button type="button" class="clear-bay-btn" id="btn-clear-stills" title="Clear all loaded still images">🗑 Clear Stills</button>
+              <label class="btn btn-sm btn-accent" id="import-stills-btn" style="cursor:pointer;" title="Import still images (.png, .jpg, .webp)">
+                + Import Stills
+                <input type="file" id="stillFileInput" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" multiple hidden />
+              </label>
+            </div>
+          </div>
+
+          <!-- Still Duration Selector Control -->
+          <div class="still-duration-control">
+            <span class="still-duration-label">DURATION:</span>
+            <select id="stillDurationSelect" class="form-select still-duration-select">
+              <option value="half_bar">1/2 Bar</option>
+              <option value="1_bar" selected>1 Bar (Default / 2.0s)</option>
+              <option value="2_bars">2 Bars (4.0s)</option>
+              <option value="custom">Custom Seconds</option>
+            </select>
+            <div id="stillCustomDurationWrap" style="display:none;align-items:center;gap:3px;">
+              <input type="number" id="stillCustomDurationInput" min="0.25" max="15.0" step="0.25" value="2.0" class="form-input" style="width:52px;padding:2px 4px;font-size:10.5px;" />
+              <span style="font-size:10px;color:var(--text-muted);">s</span>
+            </div>
+          </div>
+
+          <!-- Still Drag & Drop Target -->
+          <div class="dropzone dropzone-bay" id="stillDropzone">
+            <div id="drop-still-images" style="font-weight:700;color:#c084fc;font-size:11px;">
+              📥 Drop Still Images (.png, .jpg, .webp)
+            </div>
+            <div style="font-size:10px;color:var(--text-muted);">
+              Auto Ken Burns Motion & Story Spine
+            </div>
+          </div>
+
+          <!-- Still Images List -->
+          <div id="stillLibraryList" class="media-library-sublist">
+            <div class="empty-bay-hint">No still images loaded.</div>
+          </div>
+        </div>
+
+        <!-- Unified Fallback Containers & Hidden Compatibility Inputs -->
+        <div id="clipLibraryList" style="display:none;"></div>
+        <div id="mediaDropzone" style="display:none;"></div>
+      </div>
+    </section>
+
+    <!-- CENTER STAGE: Priority #4 — 60fps Audio-Reactive Preview & Live Stem Envelopes -->
+    <section class="center-stage">
+      <div class="canvas-viewport" id="canvasViewport">
+        <canvas id="previewCanvas" width="1280" height="720"></canvas>
+      </div>
+
+      <!-- Transport & Real-Time Audio Stem Meters -->
+      <div class="transport-bar">
+        <div class="transport-controls">
+          <div class="transport-deck">
+            <button type="button" class="transport-btn" id="btn-goto-start" title="Return to Zero / Start (Home or W)">⏮</button>
+            <button type="button" class="transport-btn" id="btn-play-pause" title="Play / Pause (Spacebar)">▶</button>
+            <button type="button" class="transport-btn" id="btn-stop" title="Stop & Rewind to Start (Num 0 or Esc)">⏹</button>
+            <button type="button" class="transport-btn" id="btn-goto-end" title="Go to End (End)">⏭</button>
+            <button type="button" class="transport-btn toggle-btn" id="btn-loop-toggle" title="Loop Timeline (L)">🔁 <span class="btn-subtext">LOOP</span></button>
+          </div>
+          <button class="btn btn-sm btn-icon" id="btnFullscreen" title="Toggle Fullscreen Viewport (F11 / F / Double-Click)" style="min-width:32px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;">⛶</button>
+          <div class="timecode" id="timecodeDisplay">00:00.00 / 00:00</div>
+
+          <!-- Dedicated Audio Button & Eject -->
+          <div class="audio-strip-action" style="display:inline-flex;align-items:center;gap:4px;">
+            <button type="button" class="action-btn primary-btn" id="btn-load-audio" title="Load Song (.mp3, .wav, .flac)">🎵 LOAD AUDIO TRACK</button>
+            <button type="button" class="btn btn-sm" id="btn-eject-audio" title="Eject Audio Track" style="display:none;padding:2px 7px;font-size:11px;color:var(--pink);border-color:rgba(244,63,94,0.4);">✕</button>
+            <input type="file" id="audio-file-input" accept="audio/*,.mp3,.wav,.flac,.ogg,.m4a" style="display: none;" />
+          </div>
+        </div>
+
+        <div class="stem-meters">
+          <div class="meter-item">
+            <div class="meter-label"><span>BASS ZOOM (20-145Hz)</span><span id="valBass">0%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="meterBass" style="background:var(--pink);"></div></div>
+          </div>
+          <div class="meter-item">
+            <div class="meter-label"><span>SNARE FLASH (Mid)</span><span id="valSnare">0%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="meterSnare" style="background:var(--amber);"></div></div>
+          </div>
+          <div class="meter-item">
+            <div class="meter-label"><span>HI-HAT RGB SPLIT</span><span id="valHigh">0%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="meterHigh" style="background:var(--accent);"></div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:4px;cursor:pointer;">
+            <input type="checkbox" id="chkLiveFx" checked /> Live Reactive FX
+          </label>
+          <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:4px;cursor:pointer;">
+            <input type="checkbox" id="chkShowHud" /> HUD
+          </label>
+        </div>
+      </div>
+
+      <!-- Dedicated HUD Status Strip (Clean, below transport, non-intrusive) -->
+      <div class="hud-status-strip" id="hudStatusStrip" style="display:none;">
+        <div class="hud-strip-left">
+          <span class="hud-strip-badge" id="hudSection">STANDBY</span>
+          <span class="hud-strip-info" id="hudClipName">Ready for playback</span>
+        </div>
+        <div class="hud-strip-right">
+          <span class="hud-strip-meta" id="hudMatchReason"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: Priority #2 — Splicer Engine, Story Spine, Preserve Full Duration & Story vs. Chop -->
+    <section class="panel panel-right">
+      <div class="panel-header">
+        <span>2. Splicer Engine & Story Spine</span>
+        <button class="btn btn-sm btn-primary" id="btnGenerateEdit">⚡ Splice Edit</button>
+      </div>
+
+      <div class="panel-body">
+        <div class="form-group">
+          <div class="form-label" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>Editing Template Preset</span>
+            <button class="btn btn-sm btn-accent" id="btnSaveCustomPreset" style="padding:2px 7px;font-size:10.5px;" title="Save current Splicer configuration to the Preset Bank & export as JSON">
+              💾 Save Custom Preset
+            </button>
+          </div>
+          <select class="form-select" id="templateSelect">
+            <optgroup label="── Core &amp; Commercial Styles ──" id="optgroupCore"></optgroup>
+            <optgroup label="── Avant-Garde &amp; Auteur Grammars ──" id="optgroupAvantGarde"></optgroup>
+            <optgroup label="── Esoteric &amp; Occult Traditions ──" id="optgroupEsoteric"></optgroup>
+          </select>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.35;" id="templateDescText"></div>
+          <div id="presetConfigBadges" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;"></div>
+        </div>
+
+        <!-- Auto-Vary / Generative Preset Switcher Deck -->
+        <div class="auto-fx-deck">
+          <label class="toggle-label" title="Automatically vary visual shaders and cutting presets dynamically during playback">
+            <input type="checkbox" id="toggle-auto-fx" />
+            <span>🎲 Auto-Vary FX &amp; Presets</span>
+          </label>
+          <select id="auto-fx-frequency" class="splicer-select" title="Frequency boundary trigger for switching shaders &amp; presets">
+            <option value="section">Switch on Song Section (Verse/Chorus)</option>
+            <option value="bar-4">Switch Every 4 Bars</option>
+            <option value="bar-1">Switch Every Downbeat (1 Bar)</option>
+            <option value="transient">Chaos Mode (Random on Heavy Transients)</option>
+          </select>
+        </div>
+
+        <!-- Avant-Garde, Cut-Up & Esoteric FX Panel -->
+        <div class="avant-garde-fx-box">
+          <div class="avant-garde-fx-title">
+            <span>🜏 Avant-Garde &amp; Esoteric FX Engine</span>
+            <span id="foldInBadge" style="font-size:9.5px;color:#c084fc;font-weight:600;">1-Stream Canvas</span>
+          </div>
+          <div class="avant-toggle-grid">
+            <label class="avant-toggle-pill" title="Brakhage vertical celluloid sprocket jump & frame-line seam on heavy bass/snare spikes">
+              <input type="checkbox" id="chkSprocketSlip" />
+              <span>Sprocket Slip</span>
+            </label>
+            <label class="avant-toggle-pill" title="Flash Burroughs Cut-Up typographic phrases on snare transients">
+              <input type="checkbox" id="chkTypoFlashes" />
+              <span>Typographic Flashes</span>
+            </label>
+            <label class="avant-toggle-pill" title="Quantize motion playback to 12fps step-printed artisanal film cadence">
+              <input type="checkbox" id="chkStepPrint12fps" />
+              <span>12fps Step-Print</span>
+            </label>
+          </div>
+          <div class="esoteric-toggle-grid">
+            <label class="avant-toggle-pill" title="Fires 1-frame (16ms) inverted negative symbol stills & Chaos Sigils on kicks & sub-bass impacts">
+              <input type="checkbox" id="chkSubliminalSigil" />
+              <span>1-Frame Subliminal Sigil Flash</span>
+            </label>
+            <label class="avant-toggle-pill" title="Deep circular obsidian scrying glass edge falloff & radial mirror reflection">
+              <input type="checkbox" id="chkObsidianScrying" />
+              <span>Obsidian Scrying Vignette</span>
+            </label>
+            <label class="avant-toggle-pill" title="2-frame Mojave solar overexposure bloom & crimson/gold dye shift on heavy snares">
+              <input type="checkbox" id="chkThelemicBloom" />
+              <span>Thelemic Crimson/Gold Dye Bloom</span>
+            </label>
+            <label class="avant-toggle-pill" title="Erratic radio-frequency static glitches & negative pulses on unpredictable transients">
+              <input type="checkbox" id="chkCosmicStatic" />
+              <span>Cosmic Static Glitch</span>
+            </label>
+            <label class="avant-toggle-pill" style="grid-column:span 2;border-color:rgba(56,189,248,0.45);background:rgba(56,189,248,0.08);" title="Lightweight 2D canvas feedback tunnel (1.05x scale, 2deg rotation, 0.90 opacity, bass scale pulse & snare hue-shift/flip)">
+              <input type="checkbox" id="chkEchoTunnel" />
+              <span>🌀 Geometric Echo Tunnel (Lightweight 2D Feedback)</span>
+            </label>
+          </div>
+
+          <!-- Burroughs Cut-Up / Typographic Flash Configuration Deck -->
+          <div class="burroughs-config-deck" id="burroughsConfigDeck">
+            <div class="burroughs-config-header">
+              <label class="burroughs-toggle-label" title="Enable typographic flash text overlay on snare hits and cut points">
+                <input type="checkbox" id="toggle-burroughs-text" checked />
+                <span>✂️ Enable Cut-Up Text Overlay</span>
+              </label>
+              <span id="burroughsStatusBadge" class="burroughs-status-badge">Upper Scrim Protected</span>
+            </div>
+            <div class="burroughs-config-controls">
+              <select id="burroughs-text-mode" class="splicer-select" title="Select source text mode for typographic flashes">
+                <option value="burroughs_cutup" selected>Burroughs Cut-Up Fragments</option>
+                <option value="lyrics_only">Song Lyrics Only</option>
+                <option value="custom_text">Custom User Text</option>
+                <option value="sigils_noise">Visual Noise / Sigils Only (No Words)</option>
+              </select>
+              <input type="text" id="burroughs-custom-text" class="form-input burroughs-custom-input" placeholder="Type custom flash words..." style="display:none;" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Narrative Story Spine & Full Clip Preservation Box -->
+        <div style="background:rgba(56,189,248,0.07);border:1px solid rgba(56,189,248,0.28);border-radius:7px;padding:9px;display:flex;flex-direction:column;gap:8px;">
+          <label style="display:flex;align-items:flex-start;gap:7px;cursor:pointer;font-size:12px;font-weight:700;color:#e0f2fe;">
+            <input type="checkbox" id="chkPreserveFullDuration" checked style="margin-top:2px;" />
+            <div>
+              <div>Preserve Full AI Clip Duration</div>
+              <div style="font-size:10.5px;font-weight:400;color:var(--text-muted);line-height:1.35;">
+                Plays each Story Spine clip to completion without cutting endings short. Snares/kicks trigger momentary cutaway stabs that resume at the exact paused frame.
+              </div>
+            </div>
+          </label>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span>Story Flow vs. Transient Chop</span>
+              <span id="storyVsChopVal" style="color:var(--accent);">50% (Balanced)</span>
+            </label>
+            <input type="range" id="storyVsChopSlider" min="0" max="100" step="5" value="50" />
+            <div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--text-muted);">
+              <span>0% Pure Story Flow</span>
+              <span>50% Story + Cutaways</span>
+              <span>100% Fast Transient Chop</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Cut Transition Mode</label>
+          <select class="form-select" id="transitionModeSelect">
+            <option value="auto_intensity" selected>⚡ Auto-Intensity (Trigger on Heavy Transients)</option>
+            <option value="hard_cut">✂️ Hard Cut (Clean Frame-Accurate Cuts)</option>
+            <option value="flash_white">💥 2-Frame Flash-to-White</option>
+            <option value="quick_glitch">⚡ Quick Glitch (RGB Tear + Slice Shift)</option>
+            <option value="soft_dissolve">🔮 Soft Scrying Dissolve (Hypnotic Crossfade)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" title="Behavior when media pool length is exceeded by audio timeline duration">
+            <span>Media Pool Exhaustion</span>
+          </label>
+          <select class="form-select" id="exhaustionModeSelect">
+            <option value="loop_vary_motion" selected>🔄 Loop &amp; Vary Motion (Auto-Wrap &amp; Dynamic KB)</option>
+            <option value="ping_pong">🔁 Ping-Pong (Forward-Backward Pass)</option>
+            <option value="hold_last">⏸️ Hold Last Frame</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Global Lyric / Visual Vibe Direction</label>
+          <input type="text" class="form-input" id="globalPromptInput" placeholder="e.g. neon cyberpunk high-energy drop, dark moody intro..." />
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="form-group">
+            <label class="form-label">
+              <span>Reactive FX Power</span>
+              <span id="fxIntensityVal">100%</span>
+            </label>
+            <input type="range" id="fxIntensitySlider" min="0" max="1.6" step="0.05" value="1.0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              <span>Min Cut Floor</span>
+              <span id="minCutVal">0.25s</span>
+            </label>
+            <input type="range" id="minCutSlider" min="0.20" max="6.00" step="0.05" value="0.25" />
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:2px;">
+          <div class="form-label" style="margin-bottom:6px;">
+            <span>Energy-Arc Sections (2-4s Low -> 0.25s Drop)</span>
+            <button class="btn btn-sm" id="btnAddSection">+ Slot</button>
+          </div>
+          <div id="sectionsSlotList" style="display:flex;flex-direction:column;gap:8px;">
+            <div style="font-size:11px;color:var(--text-muted);text-align:center;padding:12px;">
+              Upload an audio track to auto-detect Intro / Verse / Build / Drop / Chorus sections.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BOTTOM TIMELINE DOCK: Priority #3 — Beat/Bar Grid, Timed Lyrics Lane & Interactive Cut Assembly -->
+  <footer class="timeline-dock">
+    <div class="timeline-toolbar">
+      <div class="timeline-stats">
+        <div class="splicer-mode-toggle">
+          <button type="button" class="mode-btn active" id="mode-preset-btn" title="Automatic cut generation based on BPM, Story Spine, and transient beats">⚡ PRESET (AUTO SPINE)</button>
+          <button type="button" class="mode-btn" id="mode-manual-btn" title="Manual non-linear editing on the workbench track">✂ MANUAL (WORKBENCH)</button>
+        </div>
+        <span>3. Timeline &amp; Lyrics</span>
+        <span class="stat-pill" id="statBpm">BPM: --</span>
+        <span class="stat-pill" id="statCuts">Cuts: 0</span>
+        <span class="stat-pill" id="statSpineBadge" style="border-color:rgba(56,189,248,0.4);color:var(--accent);">Story Spine: Auto</span>
+        <button class="btn btn-sm" id="btnSplitAtPlayhead" title="Slice the active cut block cleanly at the playhead cursor (Hotkey: S or C)">✂️ Split (S)</button>
+        <button class="btn btn-sm" id="btnAddManualBlock" title="Add a manual cut block at the playhead or end of timeline (or drag any library clip onto the timeline)">+ Add Block</button>
+
+        <!-- Lyric Settings Panel (Global Offset + Font Family + Kinetic Animation + Alt Case) -->
+        <span class="stat-pill lyric-settings-panel" title="Timed Lyric Subtitle Settings">
+          <span style="font-weight:700;color:var(--accent-amber);">LYRIC:</span>
+          <span>Offset:</span>
+          <input type="range" id="lyricOffsetSlider" min="-5.0" max="5.0" step="0.05" value="0.0" style="vertical-align:middle;width:56px;" />
+          <input type="number" id="lyricOffsetInput" min="-5.0" max="5.0" step="0.05" value="0.00" class="lyric-offset-num" />
+          <span id="lyricOffsetVal" style="color:var(--accent-amber);min-width:38px;display:inline-block;">+0.00s</span>
+          <button class="btn btn-sm" id="btnResetLyricOffset" style="padding:1px 5px;font-size:9.5px;" title="Reset Lyric Global Offset to 0.00s">0s</button>
+          <span style="color:var(--border-hardware);">|</span>
+          <label style="display:inline-flex;align-items:center;gap:4px;">
+            <span>Font:</span>
+            <select class="form-select lyric-font-select" id="lyricFontSelect" style="padding:2px 6px;font-size:10px;height:24px;">
+              <option value="Major Mono Display">Major Mono Display</option>
+              <option value="Space Mono" selected>Space Mono</option>
+              <option value="Special Elite">Special Elite</option>
+              <option value="Cinzel Decorative">Cinzel Decorative</option>
+              <option value="UnifrakturMaguntia">UnifrakturMaguntia</option>
+              <option value="Bebas Neue">Bebas Neue</option>
+              <option value="Rubik Glitch">Rubik Glitch</option>
+              <option value="VT323">VT323</option>
+            </select>
+          </label>
+          <span style="color:var(--border-hardware);">|</span>
+          <label style="display:inline-flex;align-items:center;gap:4px;">
+            <span>Anim:</span>
+            <select class="form-select lyric-anim-select" id="lyricAnimSelect" style="padding:2px 6px;font-size:10px;height:24px;">
+              <option value="kinetic_punch">Kinetic Punch</option>
+              <option value="typewriter">Typewriter</option>
+              <option value="glitch_shake">Glitch Shake</option>
+              <option value="wave_sine">Wave / Sine Crawl</option>
+              <option value="slam_zoom">Slam Zoom</option>
+              <option value="burroughs_flash">Burroughs Flash</option>
+              <option value="classic" selected>Classic Subtitle</option>
+            </select>
+          </label>
+          <label class="lyric-altcase-toggle" style="display:inline-flex;align-items:center;gap:3px;cursor:pointer;font-size:9.5px;color:#cbd5e1;" title="When enabled (especially with Major Mono Display), randomly alternate character casing across the string">
+            <input type="checkbox" id="chkMajorMonoAltCase" />
+            <span>Alt Case</span>
+          </label>
+        </span>
+
+        <span class="stat-pill" id="statZoom">
+          Zoom: <input type="range" id="timelineZoomSlider" min="25" max="180" value="65" style="vertical-align:middle;width:68px;" />
+        </span>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;">
+        <label class="lyric-export-toggle-pill" title="Master toggle: When unchecked, bypass text rendering completely in WebCanvas & Final MP4 so exports remain 100% clean">
+          <input type="checkbox" id="chkIncludeLyricsExport" checked />
+          <span>Include Lyrics in Final Render</span>
+        </label>
+        <div id="renderStatusWrap" style="display:none;align-items:center;gap:8px;">
+          <span id="renderStatusText" style="font-size:11px;color:var(--accent);">Rendering...</span>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="renderProgressBar"></div></div>
+        </div>
+        <a id="downloadRenderBtn" class="btn btn-sm btn-emerald" style="display:none;text-decoration:none;" target="_blank">⬇ Download MP4</a>
+        <button class="btn btn-sm" id="btnExportNle" title="Export FCP7 XML & CMX3600 EDL for DaVinci Resolve / Premiere Pro">🎞️ Export XML / EDL</button>
+        <select id="export-resolution" class="splicer-select" title="Export Resolution & Aspect Ratio" style="font-size:11px;padding:4px 8px;background:#13161a;border:1px solid #282f3a;color:#e2e8f0;border-radius:4px;outline:none;cursor:pointer;">
+          <option value="1080p" selected>1080p FHD (1920x1080 - 16:9 Landscape)</option>
+          <option value="4k">4K UHD (3840x2160 - 16:9 Landscape)</option>
+          <option value="vertical">1080x1920 (9:16 Vertical / Reels / Shorts)</option>
+          <option value="square">1080x1080 (1:1 Square / Feed)</option>
+        </select>
+        <button class="btn btn-sm btn-primary" id="btnRenderMp4">🎬 Render Final MP4</button>
+      </div>
+    </div>
+
+    <div class="timeline-scroll-container" id="timelineScroll">
+      <div class="timeline-tracks" id="timelineTracks">
+        <div class="sections-track" id="sectionsTrack"></div>
+        <canvas id="waveformCanvas" height="72"></canvas>
+        <!-- Dedicated Timed Lyrics Lane below the Audio Waveform -->
+        <div class="lyrics-track" id="lyricsTrack"></div>
+        <div class="cuts-track" id="cutsTrack"></div>
+        <div class="playhead-line" id="playheadLine" style="left:0px;"></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Hidden Media Decoders for 60fps Synchronized Canvas Playback & 3-Column Fold-In -->
+  <audio id="mainAudioPlayer" preload="auto" crossorigin="anonymous"></audio>
+  <video id="videoDecoderA" muted playsinline preload="auto" style="display:none;"></video>
+  <video id="videoDecoderB" muted playsinline preload="auto" style="display:none;"></video>
+  <video id="videoDecoderL" muted playsinline preload="auto" style="display:none;"></video>
+  <video id="videoDecoderR" muted playsinline preload="auto" style="display:none;"></video>
+
+  <!-- MODAL 1: AI Providers & Keys (Universal OpenAI-Compatible + Local + Gemini/Claude) -->
+  <div class="modal-backdrop" id="modalAiSettings">
+    <div class="modal-card" style="width:660px;">
+      <div class="modal-header">
+        <span>🤖 AI Providers & Keys — Universal OpenAI & Local Model Config</span>
+        <button class="btn btn-sm" id="btnCloseAiSettings">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Active AI Clip Tagging Mode</label>
+          <select class="form-select" id="settingAiProvider">
+            <option value="hybrid_auto">Hybrid Auto (Try Universal/Gemini/Claude -> Fallback to Local OpenCV)</option>
+            <option value="openai_compat">Universal OpenAI-Compatible API (OpenAI, OpenRouter, Groq, Mistral, Ollama /v1, KoboldCpp /v1)</option>
+            <option value="local_cv">100% Local OpenCV Optical Flow + Color Mood (Instant, Offline)</option>
+            <option value="gemini">Google Gemini Native API (gemini-2.5-flash)</option>
+            <option value="claude">Anthropic Claude Native API</option>
+          </select>
+        </div>
+
+        <!-- Universal OpenAI-Compatible Configuration Box -->
+        <div style="background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.3);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-weight:700;font-size:12px;color:#e9d5ff;">🌐 Universal OpenAI-Compatible Endpoint (Cloud & Local)</span>
+            <select class="form-select" id="settingProviderPreset" style="padding:4px 8px;font-size:11px;width:270px;">
+              <option value="ollama_v1">Preset: Local Ollama (http://localhost:11434/v1)</option>
+              <option value="koboldcpp">Preset: Local KoboldCpp (http://localhost:5001/v1)</option>
+              <option value="openrouter">Preset: OpenRouter (Free & Aggregated Models)</option>
+              <option value="openai">Preset: OpenAI / ChatGPT (api.openai.com/v1)</option>
+              <option value="groq">Preset: Groq Cloud (api.groq.com/openai/v1)</option>
+              <option value="mistral">Preset: Mistral Pixtral (api.mistral.ai/v1)</option>
+              <option value="gemini_openai">Preset: Gemini OpenAI Schema</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Base URL (OpenAI /v1 Schema)</label>
+            <input type="text" class="form-input" id="settingUniversalBaseUrl" placeholder="http://localhost:11434/v1 or https://openrouter.ai/api/v1" />
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div class="form-group">
+              <label class="form-label">API Key (Optional for Local Ollama / KoboldCpp)</label>
+              <input type="password" class="form-input" id="settingUniversalApiKey" placeholder="sk-... or leave blank for local" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">
+                <span>Model Name</span>
+                <button class="btn btn-sm btn-accent" id="btnDiscoverModels" style="padding:1px 6px;">🔌 Test & Fetch Models</button>
+              </label>
+              <input type="text" class="form-input" id="settingUniversalModel" list="discoveredModelsList" placeholder="gpt-4o-mini, llava:latest, etc." />
+              <datalist id="discoveredModelsList"></datalist>
+            </div>
+          </div>
+          <div id="discoverStatusMsg" style="font-size:11px;color:var(--accent);display:none;"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;">
+          <div class="form-group">
+            <label class="form-label">Direct Gemini API Key (Optional Native Fallback)</label>
+            <input type="password" class="form-input" id="settingGeminiKey" placeholder="AIzaSy..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gemini Model</label>
+            <input type="text" class="form-input" id="settingGeminiModel" value="gemini-2.5-flash" />
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;">
+          <div class="form-group">
+            <label class="form-label">Direct Claude API Key (Optional Native Fallback)</label>
+            <input type="password" class="form-input" id="settingClaudeKey" placeholder="sk-ant-..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Claude Model</label>
+            <input type="text" class="form-input" id="settingClaudeModel" value="claude-3-5-sonnet-latest" />
+          </div>
+        </div>
+
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;margin-top:4px;">
+          <input type="checkbox" id="settingAutoSplitScenes" />
+          Automatically split long videos into sub-clips on hard scene cuts during import
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btnSaveAiSettings">Save Provider Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Universal AI Engine & Bridge -->
+  <div class="modal-backdrop" id="modalWebBridge">
+    <div class="modal-card" style="width:740px;">
+      <div class="modal-header">
+        <span>🧠 Universal AI Engine & Contact-Sheet Bridge</span>
+        <button class="btn btn-sm" id="btnCloseWebBridge">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.25);border-radius:7px;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+          <div style="font-size:12px;line-height:1.4;">
+            <b>Option A — Direct API / Local Model Batch Tagging:</b><br/>
+            <span style="color:var(--text-muted);">Tag all media automatically using your configured OpenAI, OpenRouter, Groq, Mistral, Ollama (<code>/v1</code>), KoboldCpp (<code>/v1</code>), or Gemini/Claude endpoint.</span>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0;">
+            <button class="btn btn-sm" id="btnBridgeToSettings">⚙️ Configure Endpoint</button>
+            <button class="btn btn-sm btn-primary" id="btnBridgeRunDirectAi">⚡ Auto-Tag Library Now</button>
+          </div>
+        </div>
+
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.45;">
+          <b>Option B — Universal Zero-Key Web Chat Contact-Sheet Bridge:</b><br/>
+          Use any web chat interface (<b>ChatGPT, OpenRouter Chat, Claude.ai, Gemini, or KoboldCpp WebUI</b>) with zero API configuration:<br/>
+          1. Click <b>Generate Contact Sheet</b> and drag the image into your preferred AI chat.<br/>
+          2. Click <b>Copy Universal Prompt</b> and send it with the image.<br/>
+          3. Paste the JSON array response below to apply tags & energy scores across your library!
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="btn btn-accent" id="btnBuildContactSheet">🖼 1. Generate Contact Sheet Image</button>
+          <button class="btn" id="btnCopyWebPrompt">📋 2. Copy Universal AI Prompt</button>
+          <a id="linkOpenContactSheet" href="#" target="_blank" class="btn btn-sm" style="display:none;text-decoration:none;">↗ Open Full Image</a>
+        </div>
+
+        <div id="contactSheetPreviewWrap" style="display:none;max-height:185px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:6px;background:#080a0f;">
+          <img id="contactSheetImg" src="" style="width:100%;border-radius:4px;" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Universal Prompt (Compatible with ChatGPT, Claude, Gemini, OpenRouter & Local Vision Models)</label>
+          <textarea class="form-textarea" id="webBridgePromptText" rows="3" readonly></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">3. Paste JSON Array Response Here</label>
+          <textarea class="form-textarea" id="webBridgeJsonInput" rows="4" placeholder='Paste the [ { "id": "...", "description": "...", "vibe_tags": [...] } ] JSON reply here...'></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btnApplyWebTags">✨ Apply Tags to Media Library</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Clip Inspector & Timeline Cut Swapper -->
+  <div class="modal-backdrop" id="modalClipInspector">
+    <div class="modal-card" style="width:650px;">
+      <div class="modal-header">
+        <span id="inspectorTitle">Media Inspector</span>
+        <button class="btn btn-sm" id="btnCloseInspector">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;gap:12px;">
+          <img id="inspectGridImg" src="" style="width:220px;height:124px;object-fit:cover;border-radius:6px;border:1px solid var(--border);" />
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+            <div style="font-weight:700;font-size:13px;" id="inspectFilename"></div>
+            <div style="font-size:11px;color:var(--text-muted);" id="inspectMetrics"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+              <div class="form-group">
+                <label class="form-label">Story Order (#)</label>
+                <input type="number" step="1" min="0" class="form-input" id="inspectSeqOrder" placeholder="Auto" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Energy (0-1)</label>
+                <input type="number" step="0.05" min="0" max="1" class="form-input" id="inspectMotionScore" />
+              </div>
+              <div class="form-group" id="inspectTransitionWrap" style="display:none;">
+                <label class="form-label">Cut Transition</label>
+                <select class="form-select" id="inspectCutTransition">
+                  <option value="hard_cut">✂️ Hard Cut</option>
+                  <option value="flash_white">💥 2F Flash</option>
+                  <option value="quick_glitch">⚡ Glitch</option>
+                  <option value="soft_dissolve">🔮 Soft Dissolve</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cut Block Overrides: Pin/Lock, Reverse/Ping-Pong & One-Click CSS Optical Treatments -->
+        <div id="inspectCutBlockControls" class="inspector-cut-box" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:11.5px;font-weight:700;color:#e0f2fe;">🎬 Cut Block Manual Overrides &amp; Optical Treatments</span>
+            <button class="btn btn-sm" id="btnDeleteCutBlock" style="color:var(--pink);border-color:rgba(244,63,94,0.4);padding:2px 7px;font-size:10px;" title="Remove this cut block from the timeline">🗑 Delete Cut Block</button>
+          </div>
+
+          <div class="inspector-toggle-row">
+            <label class="avant-toggle-pill" title="Lock this cut block so it will NOT be overwritten if 'Splice Edit' is recalculated">
+              <input type="checkbox" id="inspectPinBlock" />
+              <span>📌 Pin / Lock Block</span>
+            </label>
+            <label class="avant-toggle-pill" title="Run video in reverse (FFmpeg -vf reverse & WebCanvas reverse indexing) or invert Ken Burns vector for still images">
+              <input type="checkbox" id="inspectReverseClip" />
+              <span>⏪ Reverse Playback</span>
+            </label>
+            <label class="avant-toggle-pill" title="Play the first 50% of the cut block forward and the remaining 50% in reverse">
+              <input type="checkbox" id="inspectPingPongClip" />
+              <span>🔁 Ping-Pong / Yo-Yo (50/50)</span>
+            </label>
+            <label class="avant-toggle-pill" title="Flip frame horizontally via transform: scaleX(-1)">
+              <input type="checkbox" id="inspectPrismMirror" />
+              <span>🪞 Prism Horizontal Mirror</span>
+            </label>
+          </div>
+
+          <div class="form-group" style="margin-top:7px;">
+            <label class="form-label">
+              <span>One-Click CSS Optical Treatments</span>
+              <select class="form-select" id="inspectOpticalTreatment" style="width:265px;padding:3px 7px;font-size:11px;">
+                <option value="none">Clean / No Optical Filter</option>
+                <option value="solarized_sabattier">☀️ Solarized Sabattier (Inverted Midtones &amp; Glowing Edges)</option>
+                <option value="two_color_crimson_charcoal">🩸 Two-Color Dye Tint (Blood Red / Charcoal)</option>
+                <option value="two_color_cyan_amber">🧪 Two-Color Dye Tint (Cyan / Amber)</option>
+                <option value="infrared_thermal">🌡️ Infrared Thermal (False-Color Gradient Map)</option>
+                <option value="prism_horizontal_mirror">🪞 Prism Horizontal Mirror (scaleX(-1))</option>
+              </select>
+            </label>
+            <div class="optical-btn-group" id="opticalQuickBtnGroup">
+              <button type="button" class="btn btn-sm optical-chip active" data-optical="none">None</button>
+              <button type="button" class="btn btn-sm optical-chip" data-optical="solarized_sabattier">☀️ Solarized Sabattier</button>
+              <button type="button" class="btn btn-sm optical-chip" data-optical="two_color_crimson_charcoal">🩸 Dye: Red/Charcoal</button>
+              <button type="button" class="btn btn-sm optical-chip" data-optical="two_color_cyan_amber">🧪 Dye: Cyan/Amber</button>
+              <button type="button" class="btn btn-sm optical-chip" data-optical="infrared_thermal">🌡️ Infrared Thermal</button>
+              <button type="button" class="btn btn-sm optical-chip" data-optical="prism_horizontal_mirror">🪞 Prism Mirror</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">AI Visual Description</label>
+          <input type="text" class="form-input" id="inspectDesc" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Vibe & Style Tags (comma-separated)</label>
+          <input type="text" class="form-input" id="inspectVibeTags" placeholder="neon, dark, fast, crowd..." />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Lyric Keywords / Metaphors (comma-separated)</label>
+          <input type="text" class="form-input" id="inspectLyricKeywords" placeholder="fire, night, pulse, sky..." />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Recommended Song Sections (comma-separated: intro, verse, build, drop, chorus, outro)</label>
+          <input type="text" class="form-input" id="inspectSections" />
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button class="btn" id="btnDeleteClip" style="color:var(--pink);border-color:rgba(244,63,94,0.4);">🗑 Remove Media</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-accent" id="btnAssignToSelectedCut" style="display:none;">⇄ Apply Overrides &amp; Media to Cut</button>
+          <button class="btn btn-primary" id="btnSaveClipMeta">Save Metadata</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: Export Quality Profiles (Lightning Draft vs. Master Archive) -->
+  <div class="modal-backdrop" id="modalExportOptions">
+    <div class="modal-card" style="width:690px;">
+      <div class="modal-header">
+        <span style="font-family:var(--font-ui);letter-spacing:0.02em;font-size:13px;font-weight:700;text-transform:uppercase;color:#f8fafc;">🎬 Render Final Video — Export Options</span>
+        <button class="btn btn-sm" id="btnCloseExportOptions">✕</button>
+      </div>
+      <div class="modal-body" style="gap:14px;">
+        <div style="font-size:11px;color:var(--text-muted);letter-spacing:0.02em;line-height:1.4;">
+          Select rendering pipeline profile. Draft renders are optimized for rapid cut &amp; timing verification (up to 10x faster). Master Archive preserves pristine pixel structure for AI upscalers and production masters.
+        </div>
+
+        <!-- Selectable Profiles Cards -->
+        <div class="export-profiles-grid">
+          <!-- Card 1: Lightning Draft -->
+          <div class="export-profile-card" id="profileCardDraft" data-profile="draft">
+            <div class="profile-card-header">
+              <span class="profile-badge badge-draft">⚡ FAST DRAFT</span>
+              <span class="profile-title">Lightning Draft</span>
+            </div>
+            <div class="profile-subtitle">Quick Review &amp; Timing Verification</div>
+            <div class="profile-specs">
+              <div class="spec-row"><span class="spec-label">Render Speed:</span> <b style="color:#fde047;">⚡ Up to 10x Faster</b></div>
+              <div class="spec-row"><span class="spec-label">Video Encoder:</span> <b>CRF 30 • Ultrafast / VP9</b></div>
+              <div class="spec-row"><span class="spec-label">Audio Encoder:</span> <b>128k AAC / 96k Opus</b></div>
+              <div class="spec-row"><span class="spec-label">Ideal For:</span> <span>Beat sync, cut pacing &amp; flow</span></div>
+            </div>
+          </div>
+
+          <!-- Card 2: Master Archive -->
+          <div class="export-profile-card active" id="profileCardMaster" data-profile="master">
+            <div class="profile-card-header">
+              <span class="profile-badge badge-master">💎 PRODUCTION</span>
+              <span class="profile-title">Master Archive</span>
+            </div>
+            <div class="profile-subtitle">Full Production / Ready for Upscale</div>
+            <div class="profile-specs">
+              <div class="spec-row"><span class="spec-label">Visual Clarity:</span> <b style="color:#38bdf8;">💎 Pristine Uncompressed</b></div>
+              <div class="spec-row"><span class="spec-label">Video Encoder:</span> <b>CRF 16 • Medium • YUV420P</b></div>
+              <div class="spec-row"><span class="spec-label">Audio Encoder:</span> <b>320k Studio Master AAC</b></div>
+              <div class="spec-row"><span class="spec-label">Ideal For:</span> <span>Topaz Video AI / ComfyUI / 4K</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Export Configuration Options -->
+        <div class="export-config-panel">
+          <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;">
+            <div class="form-group">
+              <label class="form-label">Container Format</label>
+              <select class="form-select" id="exportContainerFormat">
+                <option value="mp4" selected>MP4 (.mp4 — H.264 / AAC)</option>
+                <option value="webm" id="optContainerWebm" disabled>WebM (.webm — VP9 / Opus) [Draft Only]</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Resolution</label>
+              <select class="form-select" id="exportResolution">
+                <option value="1920x1080" selected>1920 x 1080 (1080p FHD - 16:9)</option>
+                <option value="3840x2160">3840 x 2160 (4K UHD - 16:9)</option>
+                <option value="1080x1920">1080 x 1920 (9:16 Vertical / Reels / Shorts)</option>
+                <option value="1080x1080">1080 x 1080 (1:1 Square / Feed)</option>
+                <option value="1280x720">1280 x 720 (720p HD)</option>
+                <option value="2560x1440">2560 x 1440 (2K QHD)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Framerate</label>
+              <select class="form-select" id="exportFramerate">
+                <option value="24">24 fps (Cinematic)</option>
+                <option value="30" selected>30 fps (Standard)</option>
+                <option value="60">60 fps (Fluid 60Hz)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg-chassis);border:1px solid var(--border-hardware);border-radius:3px;">
+            <label class="avant-toggle-pill" style="margin:0;" title="Burn in the active lyric subtitles and kinetic typography directly to the exported video">
+              <input type="checkbox" id="exportBurnLyrics" checked />
+              <span>💬 Burn-in Timed Lyrics into Video</span>
+            </label>
+            <span style="font-size:10px;color:var(--text-muted);letter-spacing:0.02em;" id="exportLyricsSummary">Respects Timeline lyric cues</span>
+          </div>
+
+          <!-- Output Destination & Filename -->
+          <div class="form-group">
+            <label class="form-label" style="display:flex;justify-content:space-between;align-items:center;">
+              <span>Output Destination &amp; Filename</span>
+              <span style="font-size:9.5px;color:var(--accent-cyan);" id="exportPlatformBadge">Tauri Desktop / Windows</span>
+            </label>
+            <div style="display:flex;gap:6px;">
+              <input type="text" class="form-input" id="exportFilenameInput" placeholder="song_master_archive.mp4" style="font-size:11px;letter-spacing:0.02em;" />
+              <button type="button" class="btn btn-sm btn-accent" id="btnBrowseExportPath" style="white-space:nowrap;padding:4px 8px;font-size:11px;" title="Open native Save File dialog to select output folder and filename">📂 Browse / Save As...</button>
+            </div>
+            <div style="font-size:10px;color:var(--text-muted);letter-spacing:0.02em;" id="exportResolvedPathHint">
+              Target: <span id="exportResolvedPathText" style="color:#e2e8f0;">D:\mv-auto-e\workspace\exports\...</span>
+            </div>
+          </div>
+
+          <!-- Active FFmpeg Flag Blueprint Readout -->
+          <div class="export-flags-preview" id="exportFlagsPreview">
+            <span style="color:var(--accent-amber);font-weight:700;">ACTIVE FFMPEG FLAGS:</span>
+            <code id="exportFlagsCode">-c:v libx264 -preset medium -crf 16 -pix_fmt yuv420p -c:a aac -b:a 320k</code>
+          </div>
+        </div>
+
+        <!-- Render Progress Box (Inside Modal) -->
+        <div id="modalRenderProgressWrap" style="display:none;flex-direction:column;gap:6px;padding:10px 12px;background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.3);border-radius:3px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:0.02em;">
+            <span id="modalRenderStatusText" style="color:var(--accent-cyan);font-weight:700;">Initializing render...</span>
+            <span id="modalRenderEtaText" style="color:var(--accent-amber);font-weight:700;">ETA: Calculating...</span>
+          </div>
+          <div class="progress-bar-wrap" style="width:100%;height:10px;">
+            <div class="progress-bar-fill" id="modalRenderProgressBar" style="width:0%;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button class="btn" id="btnCancelExport">Cancel</button>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <a id="modalDownloadBtn" class="btn btn-emerald" style="display:none;text-decoration:none;" target="_blank">⬇ Download Finished Video</a>
+          <button class="btn btn-primary" id="btnStartExport" style="font-size:11px;font-weight:700;padding:4px 12px;">🎬 START RENDER</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: Built-in Searchable User Guide & Field Manual -->
+  <div class="modal-backdrop" id="manualModal">
+    <div class="modal-card manual-modal-card">
+      <div class="modal-header manual-modal-header">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="manual-title">📖 FIELD MANUAL &amp; OPERATOR'S GUIDE</span>
+          <span class="manual-badge">OFFLINE EMBEDDED</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="text" id="manualSearchInput" class="form-input manual-search-input" placeholder="🔍 Search manual (e.g. Ken Burns, split, Babalon, CRF 16, lyrics)..." />
+          <button class="btn btn-sm" id="btnCloseManual" title="Close Field Manual (Escape)">✕</button>
+        </div>
+      </div>
+
+      <div class="manual-modal-body">
+        <!-- Left Navigation Sidebar -->
+        <nav class="manual-sidebar" id="manualNav">
+          <button type="button" class="manual-nav-item active" data-target="sec-modes">
+            <span class="nav-icon">⚡</span>
+            <span class="nav-label">1. Workflow Modes</span>
+          </button>
+          <button type="button" class="manual-nav-item" data-target="sec-transport">
+            <span class="nav-icon">⏯️</span>
+            <span class="nav-label">2. Transport &amp; Navigation</span>
+          </button>
+          <button type="button" class="manual-nav-item" data-target="sec-timeline-actions">
+            <span class="nav-icon">✂️</span>
+            <span class="nav-label">3. Timeline &amp; Context Menu</span>
+          </button>
+          <button type="button" class="manual-nav-item" data-target="sec-media-bays">
+            <span class="nav-icon">🗂️</span>
+            <span class="nav-label">4. Media Bays &amp; Assets</span>
+          </button>
+          <button type="button" class="manual-nav-item" data-target="sec-fx-shaders">
+            <span class="nav-icon">🎲</span>
+            <span class="nav-label">5. Avant-Garde FX &amp; Shaders</span>
+          </button>
+          <button type="button" class="manual-nav-item" data-target="sec-presets">
+            <span class="nav-icon">🔮</span>
+            <span class="nav-label">6. Editing Presets (21 Styles)</span>
+          </button>
+          <button type="button" class="manual-nav-item" data-target="sec-lyrics">
+            <span class="nav-icon">📝</span>
+            <span class="nav-label">7. Timed Lyrics &amp; Typography</span>
+          </button>
+          <button type="button" class="manual-nav-item" data-target="sec-exports">
+            <span class="nav-icon">💎</span>
+            <span class="nav-label">8. Export Profiles &amp; Upscaling</span>
+          </button>
+          <button type="button" class="manual-nav-item" data-target="sec-architecture">
+            <span class="nav-icon">🛠️</span>
+            <span class="nav-label">9. Architecture &amp; NLE Round-Trip</span>
+          </button>
+        </nav>
+
+        <!-- Right Documentation Content Pane -->
+        <div class="manual-doc-pane" id="manualDocPane">
+
+          <!-- SECTION 1: WORKFLOW MODES -->
+          <section class="manual-section" id="sec-modes">
+            <h2 class="manual-sec-title">⚡ 1. Workflow Modes: Preset (Auto Spine) vs. Manual (Workbench)</h2>
+            <p>Strangelet Splicer provides a dedicated two-way <b>Mode Switcher</b> located directly above the timeline to toggle seamlessly between algorithmic montage creation and precision non-linear assembly:</p>
+
+            <div class="manual-grid-2">
+              <div class="manual-card-box" style="border-color:rgba(6,182,212,0.4);">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <h3 style="color:var(--accent-cyan);margin:0;">⚡ PRESET (AUTO SPINE)</h3>
+                  <span class="profile-badge badge-master">AUTO MONTAGE</span>
+                </div>
+                <p style="margin-top:6px;"><b>Algorithmic Montage Generation:</b> Slices imported footage dynamically based on detected audio transients (Kick, Snare, Hi-hat), downbeats, song energy-arc sections (Intro, Verse, Build, Drop, Chorus, Outro), and Fibonacci frame intervals.</p>
+                <p><b>Story Spine Sequencer:</b> Clips with chronological prefix filenames (e.g. <code>01_intro.mp4</code>, <code>02_verse.mp4</code>) are preserved and arranged in narrative order across the timeline.</p>
+                <p><b>Auto-Loop &amp; Seed Recycling:</b> Playback and generation never halt or freeze when audio extends past imported media. The engine automatically wraps around (<code>mediaList[currentIndex % mediaList.length]</code>).</p>
+                <p><b>Dynamic Ken Burns Motion Cycling:</b> Recycled still images automatically vary their Ken Burns motion on each subsequent pass (e.g., Pan Up Zoom In &rarr; Slow Pull Out &rarr; Diagonal Drift) so the visual rhythm stays constantly fresh.</p>
+                <p><b>Exhaustion Modes:</b> Select between <i>Loop &amp; Vary Motion</i>, <i>Ping-Pong</i>, or <i>Hold Last Frame</i> in Panel 2.</p>
+              </div>
+
+              <div class="manual-card-box" style="border-color:rgba(245,158,11,0.4);">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <h3 style="color:var(--accent-amber);margin:0;">✂ MANUAL (WORKBENCH)</h3>
+                  <span class="profile-badge badge-draft">HANDS-ON NLE</span>
+                </div>
+                <p style="margin-top:6px;"><b>Unlocked Non-Linear Assembly:</b> Provides an unrestricted manual editing track for freeform dragging, trimming, splitting, and manual clip rearrangement.</p>
+                <p><b>Zero Overwrite Guarantee:</b> Manual workbench cuts, splits, and pinned blocks (<code>📌 Pin Block</code>) are locked and protected from being overwritten whenever auto-presets are recalculated.</p>
+                <p><b>Precision Block Handles:</b> Drag left edge handles to trim cut in-points; drag right edge handles to expand or contract duration down to individual frames.</p>
+                <p><b>Drag-and-Drop Swapping:</b> Drag any video or image card from either bay directly onto a timeline block to replace its media while keeping timecode boundaries intact.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 2: TRANSPORT & NAVIGATION -->
+          <section class="manual-section" id="sec-transport">
+            <h2 class="manual-sec-title">⏯️ 2. Studio Transport Deck &amp; Direct Audio Ingestion</h2>
+            <p>Control synchronous 60fps canvas preview and Web Audio playback through the studio transport deck or global hotkeys:</p>
+
+            <table class="manual-table">
+              <thead>
+                <tr>
+                  <th style="width:24%;">Transport Control</th>
+                  <th style="width:22%;">Keyboard Shortcut</th>
+                  <th>Operational Behavior</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Play / Pause (▶ / ⏸)</b></td>
+                  <td><kbd>Spacebar</kbd></td>
+                  <td>Starts or pauses synchronous Web Audio and 60fps canvas viewport rendering.</td>
+                </tr>
+                <tr>
+                  <td><b>Return to Zero / Start (⏮)</b></td>
+                  <td><kbd>Home</kbd> or <kbd>W</kbd></td>
+                  <td>Rewinds audio and playhead immediately to <code>00:00.00</code>. If currently playing, continues playback from 0s; if paused, parks the playhead at zero.</td>
+                </tr>
+                <tr>
+                  <td><b>Stop &amp; Rewind (⏹)</b></td>
+                  <td><kbd>Num 0</kbd> or <kbd>Esc</kbd></td>
+                  <td>Pauses playback immediately, closes active popups, and rewinds playhead to <code>00:00.00</code>.</td>
+                </tr>
+                <tr>
+                  <td><b>Go to End (⏭)</b></td>
+                  <td><kbd>End</kbd></td>
+                  <td>Jumps playhead directly to the total audio/timeline duration and halts playback.</td>
+                </tr>
+                <tr>
+                  <td><b>Loop Timeline Toggle (🔁 LOOP)</b></td>
+                  <td><kbd>L</kbd></td>
+                  <td>Toggles continuous looping playback with a high-visibility luminous cyan rackmount indicator. When engaged, playback automatically wraps to 00:00.00 upon reaching the end.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="manual-card-box" style="border-color:rgba(16,185,129,0.4);margin-top:4px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:16px;">🎵</span>
+                <h4 style="color:#6ee7b7;margin:0;">Direct "LOAD AUDIO TRACK" Button</h4>
+              </div>
+              <p style="margin:4px 0 0 0;">
+                Click <b>🎵 LOAD AUDIO TRACK</b> directly on the timeline transport strip to import any song (<code>.mp3</code>, <code>.wav</code>, <code>.flac</code>, <code>.ogg</code>, <code>.m4a</code>) in one click.
+                The Web Audio engine decodes audio peaks, detects BPM and transients, computes energy-arc song sections, and renders the interactive waveform immediately. The button dynamically updates to display the loaded song title.
+              </p>
+            </div>
+          </section>
+
+          <!-- SECTION 3: TIMELINE & RIGHT-CLICK ACTIONS -->
+          <section class="manual-section" id="sec-timeline-actions">
+            <h2 class="manual-sec-title">✂️ 3. Timeline Operations &amp; Right-Click Context Menus</h2>
+            <p>Every element on the Strangelet Splicer timeline supports context-aware right-click inspection and manipulation:</p>
+
+            <div class="manual-grid-2">
+              <div class="manual-card-box">
+                <h4 style="color:var(--accent-cyan);margin-top:0;">🎬 Video Block Right-Click Context Menu</h4>
+                <ul class="manual-list">
+                  <li><b>✂ Split Block at Cursor (<kbd>S</kbd> or <kbd>C</kbd>):</b> Slices the active cut block cleanly into two independent blocks at the cursor timestamp.</li>
+                  <li><b>⏪ Reverse Clip (REV tag):</b> Reverses playback via FFmpeg <code>-vf reverse</code> or inverts Ken Burns camera sweeps for still images.</li>
+                  <li><b>⏱️ Speed Multipliers:</b> Switch between <code>0.5x Half Speed</code>, <code>1.0x Normal Speed</code>, and <code>2.0x Double Speed</code>.</li>
+                  <li><b>✨ Apply Video FX:</b> Localized shader submenu to apply CRT Phosphor, Bleach Bypass, Thermal Solar, Tape Degrade, Sepia Rotogravure, RGB Split Strobe, VHS, or Clear FX.</li>
+                  <li><b>✂ Cut Block (<kbd>Ctrl+X</kbd>):</b> Copies block data to clipboard and deletes block cleanly from timeline.</li>
+                  <li><b>📋 Copy Block (<kbd>Ctrl+C</kbd>):</b> Clones block metadata (source URL/file, duration, in/out offsets, speed, FX, Ken Burns).</li>
+                  <li><b>📥 Paste Block (<kbd>Ctrl+V</kbd>):</b> Inserts clipboard block at playhead or right-click cursor position without corrupting adjacent block offsets.</li>
+                  <li><b>🗑️ Delete Block (<kbd>Del</kbd>):</b> Removes the selected block from the timeline track.</li>
+                </ul>
+              </div>
+
+              <div class="manual-card-box">
+                <h4 style="color:var(--accent-amber);margin-top:0;">🔊 Audio Waveform Right-Click (Web Audio Slicing)</h4>
+                <p style="font-size:11px;color:var(--text-muted);margin:0 0 6px 0;">Non-destructive, beat-aligned memory slicing without altering original audio files on disk:</p>
+                <ul class="manual-list">
+                  <li><b>⏪ Reverse Slice (REV ♫):</b> Flips channel audio buffers backwards in time for the rhythmic slice interval.</li>
+                  <li><b>✂ Beat Chop / Stutter Repeat:</b> Subdivides the beat slice into 4 rapid rhythmic repeats for glitch/trap fills.</li>
+                  <li><b>⏱ Half-Speed Tape Stop (0.5x):</b> Stretches sample playback at half rate for authentic vinyl/tape slowdown effects.</li>
+                  <li><b>🔇 Mute Slice (Drop-out):</b> Drops gain to 0.0 for rhythmic drops and dramatic tension breaks.</li>
+                  <li><b>🔄 Reset Slice:</b> Removes all slice modifications and restores original pristine audio data.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 4: MEDIA BAYS & ASSET MANAGEMENT -->
+          <section class="manual-section" id="sec-media-bays">
+            <h2 class="manual-sec-title">🗂️ 4. Media Bays &amp; Asset Management</h2>
+            <p>Assets are organized into two dedicated bays with instant reactive timeline synchronization and project hygiene controls:</p>
+
+            <div class="manual-grid-2">
+              <div class="manual-card-box">
+                <h4 style="color:#38bdf8;margin-top:0;">🎬 Video Clips Bay &amp; 🖼️ Still Images Bay</h4>
+                <ul class="manual-list">
+                  <li><b>Video Clips Bay:</b> Supports <code>.mp4</code>, <code>.mov</code>, <code>.webm</code> (H.264, VP9, AV1, ProRes). Displays duration, resolution, motion energy scores, and Story Spine badges.</li>
+                  <li><b>Still Images Bay:</b> Supports <code>.png</code>, <code>.jpg</code>, <code>.jpeg</code>, <code>.webp</code>. Driven by the Ken Burns engine with dynamic motion parameters (Zoom In Pan Right, Slow Pull Out, Diagonal Drift).</li>
+                  <li><b>Reactive Timeline Updates:</b> Drag-and-drop or file import immediately updates library counter badges (e.g. <code>STILL IMAGES (X)</code>, <code>VIDEO CLIPS (X)</code>) and re-evaluates the timeline, instantly populating tracks if waiting for media.</li>
+                </ul>
+              </div>
+
+              <div class="manual-card-box">
+                <h4 style="color:#f43f5e;margin-top:0;">🧹 Asset Flushing &amp; Session Teardown</h4>
+                <ul class="manual-list">
+                  <li><b>🗑 Clear Videos Button:</b> Dedicated button on Video Bay header to flush all video clips from memory without resetting your music track or manual cut markers.</li>
+                  <li><b>🗑 Clear Stills Button:</b> Dedicated button on Still Bay header to flush all still images without resetting audio or cuts.</li>
+                  <li><b>File &rarr; New Session (<kbd>Ctrl+N</kbd>):</b> Complete project teardown and clean slate reset. Wipes Web Audio buffers, resets waveform canvas, clears lyrics and subtitle tracks, flushes all cut points and transient markers, and purges all media libraries.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 5: AVANT-GARDE FX & AUTO-VARY ENGINE -->
+          <section class="manual-section" id="sec-fx-shaders">
+            <h2 class="manual-sec-title">🎲 5. Avant-Garde FX &amp; Generative Auto-Vary Engine</h2>
+            <p>Strangelet Splicer includes 6 real-time hardware aesthetic shaders and an intelligent generative auto-variation engine:</p>
+
+            <table class="manual-table">
+              <thead>
+                <tr>
+                  <th style="width:25%;">Shader ID / Name</th>
+                  <th style="width:30%;">Visual &amp; Optical Treatment</th>
+                  <th>Audio-Reactive &amp; Procedural Behavior</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>CRT Phosphor</b><br/><code>fx-crt-phosphor</code></td>
+                  <td>Green/amber monochrome terminal tint, horizontal scanlines, barrel distortion vignette.</td>
+                  <td>Phosphorescent luminescent trail overlay that blooms on transient spikes.</td>
+                </tr>
+                <tr>
+                  <td><b>Bleach Bypass</b><br/><code>fx-bleach-bypass</code></td>
+                  <td>Silver Halide high-contrast desaturation (contrast: 170%, saturate: 35%, brightness: 90%).</td>
+                  <td>Matches 90s film stock look; high-frequency silver tone mapping.</td>
+                </tr>
+                <tr>
+                  <td><b>Thermal Solar</b><br/><code>fx-thermal-solar</code></td>
+                  <td>False-color infrared temperature map using difference blend and multi-stop solarization.</td>
+                  <td>Shifts color spectrum across hot and cold bands reactive to frequency spectrum.</td>
+                </tr>
+                <tr>
+                  <td><b>Tape Degrade</b><br/><code>fx-tape-degrade</code></td>
+                  <td>VHS chroma displacement, vertical tape flutter jitter, and static tracking bars across cuts.</td>
+                  <td>Simulates authentic magnetic tape tracking error and transport head misalignment.</td>
+                </tr>
+                <tr>
+                  <td><b>Sepia Rotogravure</b><br/><code>fx-sepia-rotogravure</code></td>
+                  <td>Aged 1920s print grain, warm sepia/umber duotone mapping, and fluctuating film flicker.</td>
+                  <td>Random opacity cycling between 0.88 and 1.0 recreating antique hand-cranked projector flicker.</td>
+                </tr>
+                <tr>
+                  <td><b>RGB Split Strobe</b><br/><code>fx-rgb-split-strobe</code></td>
+                  <td>Dynamic chromatic aberration splitting red and cyan color channels.</td>
+                  <td>Spike amplitude calculates directly from snare and hi-hat transient hits in real time.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="manual-card-box" style="border-color:rgba(168,85,247,0.4);margin-top:4px;">
+              <h4 style="color:#c084fc;margin:0 0 4px 0;">🎲 Generative Auto-Vary Preset &amp; FX Switcher</h4>
+              <p style="margin:0 0 6px 0;">
+                Enable <b>🎲 Auto-Vary FX &amp; Presets</b> in Panel 2 to transform playback into an ever-evolving generative experience.
+                Select switch frequency: <i>Switch on Song Section (Verse/Chorus)</i>, <i>Switch Every 4 Bars</i>, <i>Switch Every Downbeat (1 Bar)</i>, or <i>Chaos Mode (Random on Heavy Transients)</i>.
+              </p>
+              <ul class="manual-list">
+                <li><b>Zero Audio Interruption:</b> Switches visual presets and cutting grammars dynamically without dropping frames or stalling Web Audio.</li>
+                <li><b>Anti-Repetition Buffer:</b> Remembers the last 2 applied presets/shaders to guarantee non-repeating visual progression.</li>
+                <li><b>1-Frame Physical Hardware Cut Flash:</b> Injects a brief 1-frame analog video deck matrix switch effect (inversion/whiteout) on preset switch events.</li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- Section 6: Editing Presets & Grammars (25 Styles) -->
+          <section class="manual-section" id="sec-presets">
+            <h2 class="manual-sec-title">🔮 6. Editing Presets &amp; Film Grammars (25 Styles)</h2>
+            <p>The Splicer engine contains 25 tailored editing grammars categorized into Core, Avant-Garde/Auteur, and Esoteric traditions:</p>
+
+            <h3 style="color:var(--accent-amber);margin-top:16px;">Core &amp; Commercial Grammars</h3>
+            <table class="manual-table">
+              <thead>
+                <tr>
+                  <th style="width:28%;">Preset Name</th>
+                  <th style="width:22%;">Pacing &amp; Rules</th>
+                  <th>Visual &amp; Optical Treatment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>🛠️ Manual Workbench (Empty Slate)</b></td>
+                  <td>Zero auto-cuts; preserves pinned blocks; loads audio grid</td>
+                  <td>Clean 100% manual assembly workbench.</td>
+                </tr>
+                <tr>
+                  <td><b>🎬 Narrative Storyboard</b></td>
+                  <td>Strict <code>01_</code>, <code>02_</code> Story-Spine; 4.0s+ holds</td>
+                  <td>Preserves full clip duration; gentle camera pans; clean cuts.</td>
+                </tr>
+                <tr>
+                  <td><b>📼 Lo-Fi VHS Tape Deck</b></td>
+                  <td>2-to-4 bar cuts; rhythmic head-drifts</td>
+                  <td>90s tape tracking lines; chromatic aberration; analog noise bleed.</td>
+                </tr>
+                <tr>
+                  <td><b>⚡ Cyber Glitch / Hyper-Chop</b></td>
+                  <td>16th-note transients (0.25s floor)</td>
+                  <td>Extreme RGB channel splits; white flashes; kick-reactive stabs.</td>
+                </tr>
+                <tr>
+                  <td><b>🎞️ Scene Cluster Montage</b></td>
+                  <td>Clusters similar vibe tags into mini-arcs</td>
+                  <td>Rapid 2-to-3 cut clusters followed by 3-second narrative breathing holds.</td>
+                </tr>
+                <tr>
+                  <td><b>🎥 Analog 16mm Film Reel</b></td>
+                  <td>1-to-2 bar rhythmic cutting</td>
+                  <td>Sprocket-hole slip jitter; organic film grain; warm Kodak dye bath.</td>
+                </tr>
+                <tr>
+                  <td><b>🌑 Dark Minimalist</b></td>
+                  <td>Hypnotic 6.0s–12.0s holds</td>
+                  <td>Deep shadows; high contrast; subtle camera push-ins.</td>
+                </tr>
+                <tr>
+                  <td><b>📱 Social Short / Reel Frenzy</b></td>
+                  <td>0.5s–1.2s rapid hooks</td>
+                  <td>Perpetual motion; center-weighted framing; punch zoom on drops.</td>
+                </tr>
+                <tr>
+                  <td><b>🎯 Downbeat Anchored (Verse/Chorus Dynamic)</b></td>
+                  <td>1–2 bars on downbeat (verse); 2-beats on snare (chorus)</td>
+                  <td>Dynamic music video pacing; downbeat impact punches; energy-adapted chorus cuts.</td>
+                </tr>
+                <tr>
+                  <td><b>🌫️ Ambient / Shoegaze Drift (Long Form)</b></td>
+                  <td>6.0s–10.0s long holds; ignores transients</td>
+                  <td>500ms soft dissolves; slow atmospheric Ken Burns drift; zero rapid stutters.</td>
+                </tr>
+                <tr>
+                  <td><b>🥁 Snare-Lock Half-Time (Urban / Lo-Fi)</b></td>
+                  <td>Anchored exclusively to snare/clap transients (beats 2 &amp; 4)</td>
+                  <td>Hi-hat/sub-bass ignored; cuts strictly locked to the backbeat groove.</td>
+                </tr>
+                <tr>
+                  <td><b>📈 Dynamic Energy Ramping (Build-up)</b></td>
+                  <td>RMS energy adaptive: 4+ bars (&lt; -18dB) to 1/4 bar (&gt; -6dB)</td>
+                  <td>Exponential cutting speed ramp from quiet verses into hyper-kinetic drops.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3 style="color:var(--accent-cyan);margin-top:20px;">Avant-Garde &amp; Auteur Grammars</h3>
+            <table class="manual-table">
+              <thead>
+                <tr>
+                  <th style="width:28%;">Preset Name</th>
+                  <th style="width:22%;">Pacing &amp; Rules</th>
+                  <th>Visual &amp; Optical Treatment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>✂️ Burroughs Cut-Up Machine</b></td>
+                  <td>Non-linear chance distribution</td>
+                  <td><b>3-Column Split Canvas</b>: folds 3 asynchronous video streams simultaneously; 3-frame reverse tape-drag stutters on downbeats.<br/>
+                  <small style="color:var(--accent-amber);">Includes configurable Cut-Up Text Overlay: Burroughs fragments, Song Lyrics only, Custom user text, or Sigils/Noise only. Auto-moves to upper scrim when lyrics are loaded.</small></td>
+                </tr>
+                <tr>
+                  <td><b>🧪 Brakhage Emulsion Decay</b></td>
+                  <td>Rapid multi-speed cutting</td>
+                  <td>Emulsion scratches; chemical dye solarization; bleach burns; frame-rate jitter.</td>
+                </tr>
+                <tr>
+                  <td><b>⚡ Structural Flicker (Sharits)</b></td>
+                  <td>1-to-4 frame metric strobes</td>
+                  <td>Metric alternation between complementary clips and negative color frames.</td>
+                </tr>
+                <tr>
+                  <td><b>⏱️ Metric Time-Stutter (Kubelka)</b></td>
+                  <td>Strict 2/4/8 frame intervals</td>
+                  <td>Mathematical metronome cutting locked to tempo without fade or dissolve.</td>
+                </tr>
+                <tr>
+                  <td><b>🏭 Lynchian Monochrome (Eraserhead)</b></td>
+                  <td>Slow creeping motion holds</td>
+                  <td><b>12fps Step-Printing</b>; high-contrast industrial black-and-white; low hum room vibration.</td>
+                </tr>
+                <tr>
+                  <td><b>📹 Mekas Bolex Diary</b></td>
+                  <td>3-to-6 frame handheld bursts</td>
+                  <td>Hand-wound camera shutter pulse; spontaneous jump-cuts; ambient light leaks.</td>
+                </tr>
+                <tr>
+                  <td><b>🖼️ Marker Photo-Montage (La Jetée)</b></td>
+                  <td>100% still-image pacing</td>
+                  <td>Hypnotic still-image camera drift; sudden frozen temporal holds.</td>
+                </tr>
+                <tr>
+                  <td><b>🏴 Debord Détournement</b></td>
+                  <td>Ideological clash-cutting</td>
+                  <td>Subversive juxtaposition; typographic slogans; abrupt metric breaks.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3 style="color:#f43f5e;margin-top:20px;">Esoteric &amp; Occult Traditions</h3>
+            <table class="manual-table">
+              <thead>
+                <tr>
+                  <th style="width:28%;">Preset Name</th>
+                  <th style="width:22%;">Pacing &amp; Rules</th>
+                  <th>Visual &amp; Optical Treatment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>☀️ Babalon Working (Parsons)</b></td>
+                  <td>7-beat and 11-beat intervals</td>
+                  <td>Saturated desert solar flares; blood-red and gold duotone shifts; heat-shimmer displacement.</td>
+                </tr>
+                <tr>
+                  <td><b>👁️ Chaos Sigil Flash (A.O. Spare)</b></td>
+                  <td>Sub-bass transient stabs</td>
+                  <td>Subconscious <b>1-frame (16ms)</b> sigil insertions; negative-inverted flash returns instantly to narrative.</td>
+                </tr>
+                <tr>
+                  <td><b>🪞 Enochian Scrying Glass (Dee)</b></td>
+                  <td>5.0s–8.0s scrying holds</td>
+                  <td>Circular obsidian vignette falloff; radial mirror reflections; soft dissolves on cymbal washes.</td>
+                </tr>
+                <tr>
+                  <td><b>🌌 Typhonian Transmissions (Grant)</b></td>
+                  <td>Cosmic build-ups</td>
+                  <td>Deep cosmic indigo tint; false-color infrared gradient mapping; cosmic static glitch bursts.</td>
+                </tr>
+                <tr>
+                  <td><b>👑 Dim Carcosa / Aldebaran Gold</b></td>
+                  <td>Creeping camera crawls</td>
+                  <td>Decadent imperial gold &amp; sepia dye baths; decaying twin-sun solarization.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 7: Timed Lyrics & Typography -->
+          <section class="manual-section" id="sec-lyrics">
+            <h2 class="manual-sec-title">📝 7. Timed Lyrics &amp; Kinetic Typography</h2>
+            <p>Strangelet Splicer includes a native <code>.lrc</code> and <code>.srt</code> parser with frame-accurate kinetic typography:</p>
+
+            <div class="manual-grid-2">
+              <div class="manual-card-box">
+                <h4 style="color:var(--accent-amber);">1. Importing &amp; Global Offset</h4>
+                <p>Click <b>📝 Import Lyrics (.lrc / .srt)</b> or drop an LRC/SRT file onto the dedicated <b>Lyrics Track</b> below the waveform. Use the <b>Offset Slider</b> (<code>-5.0s</code> to <code>+5.0s</code> in 50ms increments) to eliminate vocal latency or sync drift.</p>
+              </div>
+
+              <div class="manual-card-box">
+                <h4 style="color:var(--accent-cyan);">2. Clean Export Bypass</h4>
+                <p>Uncheck <b>[ ] Include Lyrics in Final Render</b> in the bottom bar or export modal to completely bypass subtitle rendering, ensuring pristine 100% clean video output whenever required.</p>
+              </div>
+            </div>
+
+            <h3 style="color:#e2e8f0;margin-top:16px;">7 Selectable Kinetic Typography Animations:</h3>
+            <ul class="manual-list">
+              <li><b>Kinetic Punch:</b> Words scale up smoothly on kick/bass transient spikes and snap back via spring decay.</li>
+              <li><b>Typewriter:</b> Characters reveal sequentially across the line's active duration window.</li>
+              <li><b>Glitch Shake:</b> Applies random 1–5px jitter to letters; heavy transients multiply displacement and trigger chromatic red/cyan split shadows.</li>
+              <li><b>Wave / Sine Crawl:</b> Characters undulate on a smooth mathematical sine wave offset: <code>yOffset = sin(t * 4 + c * 0.4) * amp</code>.</li>
+              <li><b>Slam Zoom:</b> Scales down rapidly from 2.5x to 1.0x over the first 120ms with a brief impact shake.</li>
+              <li><b>Burroughs Flash:</b> High-contrast bold all-caps centered on screen with 1-to-2 frame transient flicker.</li>
+              <li><b>Classic Subtitle:</b> Clean lower-third cinematic typography inside a translucent pill backdrop.</li>
+            </ul>
+
+            <div class="manual-callout">
+              <b>🔤 Google Fonts Suite:</b> Choose between <i>Space Mono</i>, <i>Major Mono Display</i> (with optional Alt-Case randomization), <i>Bebas Neue</i>, <i>Special Elite</i>, <i>Cinzel Decorative</i>, <i>UnifrakturMaguntia</i>, <i>Rubik Glitch</i>, and <i>VT323</i>.
+            </div>
+          </section>
+
+          <!-- Section 8: Export Profiles, Multi-Aspect Resolutions & Upscaling Pipeline -->
+          <section class="manual-section" id="sec-exports">
+            <h2 class="manual-sec-title">💎 8. Export Profiles, Multi-Aspect Resolutions &amp; Upscaling</h2>
+            <p>When you click <b>🎬 Render Final MP4</b>, you can choose between two dedicated production profiles and multiple resolutions &amp; aspect ratios:</p>
+
+            <div class="manual-grid-2">
+              <div class="manual-card-box" style="border-color:rgba(234,179,8,0.4);">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <h3 style="color:#fde047;margin:0;">⚡ Lightning Draft</h3>
+                  <span class="profile-badge badge-draft">QUICK REVIEW</span>
+                </div>
+                <p style="margin-top:6px;"><b>Container:</b> <code>.mp4</code> (H.264 ultrafast) or <code>.webm</code> (VP9 speed 5).</p>
+                <p><b>FFmpeg Flags:</b> <code>-c:v libx264 -preset ultrafast -crf 30 -c:a aac -b:a 128k</code></p>
+                <p><b>Performance:</b> Renders up to <b>10x faster</b>. Use this for rapid pacing checks, timing verification, and client scratch previews.</p>
+              </div>
+
+              <div class="manual-card-box" style="border-color:rgba(6,182,212,0.4);">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <h3 style="color:#38bdf8;margin:0;">💎 Master Archive</h3>
+                  <span class="profile-badge badge-master">PRODUCTION MASTER</span>
+                </div>
+                <p style="margin-top:6px;"><b>Container:</b> <code>.mp4</code> (H.264 High Profile).</p>
+                <p><b>FFmpeg Flags:</b> <code>-c:v libx264 -preset medium -crf 16 -pix_fmt yuv420p -c:a aac -b:a 320k</code></p>
+                <p><b>Quality:</b> Pristine uncompressed visual clarity. Preserves micro-grain, edges, and textures specifically designed for post-process AI upscalers.</p>
+              </div>
+            </div>
+
+            <div class="manual-callout">
+              <b>📐 Target Resolutions &amp; Aspect Ratios:</b>
+              <br/>Select your export geometry directly on the timeline dock or export modal:
+              <ul style="margin:4px 0 0 16px;padding:0;">
+                <li><b>1080p FHD (1920x1080)</b> — Standard 16:9 widescreen YouTube / Vimeo delivery.</li>
+                <li><b>4K UHD (3840x2160)</b> — Ultra-high definition 16:9 archival master.</li>
+                <li><b>1080x1920 (9:16 Vertical)</b> — Native vertical framing for TikTok, Instagram Reels, and YouTube Shorts.</li>
+                <li><b>1080x1080 (1:1 Square)</b> — Centered square format for Instagram and social feeds.</li>
+              </ul>
+            </div>
+
+            <div class="manual-callout-amber">
+              <b>🤖 Preparing Master Archive for AI Upscaling:</b>
+              <br/>Feed the exported Master Archive MP4 into <b>Topaz Video AI</b> (Proteus / Iris models) or <b>ComfyUI AnimateDiff</b> upscaling workflows. The CRF 16 bitstream ensures the AI model sees actual video data rather than compression block artifacts.
+            </div>
+
+            <div class="manual-callout">
+              <b>📂 Custom Save Destination:</b> Click <b>Browse / Save As...</b> to select any folder or drive destination on Windows using the native Save File dialog. During render, live percentage, processing speed (fps), and remaining countdown (ETA) are reported in real time.
+            </div>
+          </section>
+
+          <!-- Section 9: Offline Tauri Architecture & NLE Round-Trip -->
+          <section class="manual-section" id="sec-architecture">
+            <h2 class="manual-sec-title">🛠️ 9. Offline Tauri Architecture &amp; NLE Round-Trip</h2>
+            <p>Strangelet Splicer is architected to run with 100% offline autonomy:</p>
+            <ul class="manual-list">
+              <li><b>Native FFmpeg Sidecar:</b> Bundled inside <code>src-tauri/binaries/ffmpeg-x86_64-pc-windows-msvc.exe</code>, eliminating any requirement for external system FFmpeg installs.</li>
+              <li><b>Zero Cloud Lock-in:</b> DSP analysis (BPM, downbeats, Kick/Snare envelopes) and OpenCV rendering run on your local machine with cache directories mapped to <code>D:\mv-auto-e\.cache\tmp</code>.</li>
+              <li><b>Universal AI Engine Bridge:</b> Tag media locally with OpenCV or connect any OpenAI-compatible vision model (Local Ollama, KoboldCpp, OpenRouter, Groq, Mistral, Gemini, Claude) with persistent key storage.</li>
+              <li><b>NLE Round-Trip:</b> Click <b>🎞️ Export XML / EDL</b> to export CMX3600 EDL and Premiere/DaVinci Resolve FCP7 XML sequences for color grading and multi-cam mastering.</li>
+            </ul>
+          </section>
+
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content:space-between;">
+        <span style="font-family:var(--font-ui);font-size:10.5px;color:var(--text-muted);">
+          Strangelet Splicer v1.1 • Press <kbd>Esc</kbd> to return to workspace
+        </span>
+        <button class="btn btn-primary" id="btnCloseManualBottom">Return to Workspace</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: About Strangelet Splicer -->
+  <div class="modal-backdrop" id="modalAbout" style="display:none;">
+    <div class="modal-box" style="max-width:520px;">
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="brand-logo" style="width:36px;height:36px;font-size:18px;">SS</div>
+          <div>
+            <div style="font-weight:800;color:var(--text-bright);font-size:15px;letter-spacing:0.5px;">Strangelet Splicer</div>
+            <div style="font-size:11px;color:var(--text-muted);font-family:var(--font-ui);">v1.1.0 • Desktop Edition</div>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-icon" id="btnCloseAbout">✕</button>
+      </div>
+      <div class="modal-body" style="padding:16px;font-size:12.5px;color:var(--text-main);line-height:1.6;">
+        <p style="margin-top:0;">
+          <b>Strangelet Splicer</b> is a high-speed, audio-reactive story-spine video sequencer and montage editor engineered for musicians, visual artists, and experimental filmmakers.
+        </p>
+        <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border-color);border-radius:6px;padding:12px;margin:12px 0;font-family:var(--font-ui);font-size:11px;">
+          <div style="color:var(--accent-amber);font-weight:700;margin-bottom:6px;">ENGINE ARCHITECTURE</div>
+          <div>• 60fps Kinetic Typography &amp; Canvas Renderer</div>
+          <div>• Multi-Genre Beat &amp; Onset Detection (Aubio / Librosa)</div>
+          <div>• 21 Curated Montage Styles (Core, Avant-Garde &amp; Esoteric)</div>
+          <div>• Hardware-Preserved Full Clip &amp; Story Spine Preservation</div>
+          <div>• Deterministic Native FFmpeg Sidecar Pipeline</div>
+        </div>
+        <p style="font-size:11px;color:var(--text-muted);margin-bottom:0;">
+          Engineered for autonomous offline operation on Windows. Built with Tauri v2, HTML5 Canvas, and FFmpeg.
+        </p>
+      </div>
+      <div class="modal-footer" style="justify-content:flex-end;">
+        <button class="btn btn-primary" id="btnOkAbout">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Right-Click Context Menu for Timeline Video Blocks & Audio Waveform -->
+  <div id="timeline-context-menu" class="context-menu" style="display: none;">
+    <!-- VIDEO BLOCK ACTIONS (visible when right-clicking a video/image block) -->
+    <div class="menu-section" id="ctx-video-section">
+      <div class="menu-item" data-action="cut">✂ Cut Block (Ctrl+X)</div>
+      <div class="menu-item" data-action="copy">📋 Copy Block (Ctrl+C)</div>
+      <div class="menu-item disabled" id="ctx-paste-btn" data-action="paste">📥 Paste Block at Cursor (Ctrl+V)</div>
+      <div class="menu-divider"></div>
+      <div class="menu-item" data-action="split">✂ Split Block at Cursor (S)</div>
+      <div class="menu-item" data-action="reverse">🔄 Reverse Video Clip</div>
+      <div class="menu-item" data-action="speed-half">🐢 Half Speed (0.5x)</div>
+      <div class="menu-item" data-action="speed-normal">⚡ Normal Speed (1.0x)</div>
+      <div class="menu-item" data-action="speed-double">🐇 Double Speed (2.0x)</div>
+      <div class="menu-divider"></div>
+      <div class="menu-item-submenu">
+        <span>✨ Apply Video FX ▸</span>
+        <div class="submenu">
+          <div class="menu-item" data-action="fx-glitch">Chromatic / VHS Glitch</div>
+          <div class="menu-item" data-action="fx-monochrome">High-Contrast B&W</div>
+          <div class="menu-item" data-action="fx-strobe">1-Frame Tungsten Strobe</div>
+          <div class="menu-item" data-action="fx-burns">Ken Burns Slow Zoom</div>
+          <div class="menu-divider"></div>
+          <div class="menu-item" data-action="fx-crt-phosphor">📟 CRT Phosphor Terminal</div>
+          <div class="menu-item" data-action="fx-bleach-bypass">🎞️ Bleach Bypass (Silver Halide)</div>
+          <div class="menu-item" data-action="fx-thermal-solar">🌡️ Thermal Infrared Solarization</div>
+          <div class="menu-item" data-action="fx-tape-degrade">📼 Tape Degrade &amp; Jitter</div>
+          <div class="menu-item" data-action="fx-sepia-rotogravure">📜 1920s Sepia Rotogravure</div>
+          <div class="menu-item" data-action="fx-rgb-split-strobe">⚡ RGB Split Strobe Transient</div>
+          <div class="menu-divider"></div>
+          <div class="menu-item" data-action="fx-clear">Clear Applied FX</div>
+        </div>
+      </div>
+      <div class="menu-divider"></div>
+      <div class="menu-item" data-action="toggle-typo-flash">🔤 Typographic Flashes: On / Off</div>
+      <div class="menu-divider"></div>
+      <div class="menu-item danger" data-action="delete">🗑 Delete Block (Del)</div>
+    </div>
+
+    <!-- GENERAL TIMELINE CANVAS ACTIONS (visible when right-clicking empty space on timeline tracks) -->
+    <div class="menu-section" id="ctx-canvas-section" style="display: none;">
+      <div class="menu-header">🎬 Timeline Track</div>
+      <div class="menu-item disabled" id="ctx-canvas-paste-btn" data-action="paste">📥 Paste Block at Cursor (Ctrl+V)</div>
+      <div class="menu-item" data-action="split-playhead">✂ Razor Split at Playhead (S)</div>
+      <div class="menu-divider"></div>
+      <div class="menu-item" data-action="clear-all">🗑 Clear All Cuts</div>
+    </div>
+
+    <!-- AUDIO OPERATIONS (visible when right-clicking the waveform strip) -->
+    <div class="menu-section" id="ctx-audio-section">
+      <div class="menu-header" id="ctx-audio-header">🔊 Audio Slice Edits</div>
+      <div class="menu-item" data-action="audio-reverse">🔄 Reverse Audio Slice</div>
+      <div class="menu-item" data-action="audio-chop">⚡ Beat Chop / Stutter Repeat</div>
+      <div class="menu-item" data-action="audio-halftime">🐢 Half-Speed Tape Stop (0.5x)</div>
+      <div class="menu-item" data-action="audio-mute">🔇 Mute Slice (Drop-out)</div>
+      <div class="menu-divider"></div>
+      <div class="menu-item" data-action="audio-reset">↺ Reset Audio Slice to Normal</div>
+    </div>
+  </div>
+
+  <!-- JSZip Engine for Project Bundles (.zip) -->
+  <script src="./jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <script src="./app.js"></script>
+</body>
+</html>
