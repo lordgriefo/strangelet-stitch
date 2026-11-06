@@ -2359,8 +2359,14 @@ function syncVideoDecodersToTime(t, forceSeek = false, bassVal = 0) {
     );
   }
 
+  if (!ev.clip_url && ev.clip_filename) {
+    ev.clip_url = `/workspace/clips/${ev.clip_filename}`;
+  }
+  if (ev.end === undefined && ev.duration !== undefined) {
+    ev.end = Number((ev.start + ev.duration).toFixed(3));
+  }
   if (ev.media_type === 'image') {
-    const resolvedImgUrl = toAssetUrl(ev.clip_url);
+    const resolvedImgUrl = toAssetUrl(ev.clip_url || `/workspace/clips/${ev.clip_filename}`);
     if (!Studio.imageCache[resolvedImgUrl]) {
       const im = new Image();
       im.src = resolvedImgUrl;
@@ -2633,8 +2639,10 @@ function drawProceduralChaosSigil(ctx, w, h, seed = 1) {
 }
 
 function renderLoop() {
-  const t = els.mainAudio.currentTime || 0;
-  const dur = (Studio.audio && Studio.audio.duration) || 0;
+  const t = (Studio.audio && els.mainAudio && !isNaN(els.mainAudio.currentTime))
+    ? (els.mainAudio.currentTime || 0)
+    : (Studio.scratchCurrentTime || 0);
+  const dur = (Studio.audio && Studio.audio.duration) || (Studio.timeline && Studio.timeline.total_duration) || 0;
   els.timecodeDisplay.textContent = `${formatTime(t)} / ${formatTime(dur)}`;
   els.playheadLine.style.left = `${t * Studio.pxPerSec}px`;
 
@@ -2674,10 +2682,11 @@ function renderLoop() {
 
   if (syncState) {
     if (syncState.isImage) {
-      drawableSource = (syncState.imageEl && syncState.imageEl.complete) ? syncState.imageEl : null;
+      const im = syncState.imageEl;
+      drawableSource = (im && im.complete && (im.naturalWidth > 0 || im.width > 0)) ? im : null;
     } else {
       const vid = syncState.videoEl;
-      if (vid && vid.readyState >= 2 && !vid.seeking) {
+      if (vid && vid.readyState >= 2 && !vid.seeking && vid.videoWidth > 0) {
         drawableSource = vid;
       } else if (VideoPool.hasCachedFrame) {
         // FRAME-DROP FAILSAFE: Video frame not decoded in time for a 1-frame or 2-frame cut;
@@ -3533,9 +3542,7 @@ function renderLoop() {
     if (VideoPool.hasCachedFrame && syncState) {
       ctxPreview.drawImage(VideoPool.lastRenderedCanvas, 0, 0);
     } else if (!Studio.timeline || !Studio.timeline.events || !Studio.timeline.events.length) {
-      // When no timeline events are loaded (clean slate session), keep the preview canvas solid black
-      ctxPreview.fillStyle = '#000000';
-      ctxPreview.fillRect(0, 0, els.previewCanvas.width, els.previewCanvas.height);
+      drawIdleCanvas();
     }
   }
 
@@ -4555,18 +4562,23 @@ async function executeSectionInsert(sec, mediaType, pacing) {
     const thisDur = Math.min(cutDur, secEnd - curT);
     const clip = eligibleClips[clipIdx % eligibleClips.length];
     const isStill = clip.media_type === 'image';
+    const endT = Number((curT + thisDur).toFixed(3));
+    const kb = isStill ? (clip.ken_burns || clip.ken_burns_preset || 'zoom_in_pan_right') : null;
     newEvents.push({
       clip_id: clip.id,
       clip_filename: clip.filename,
-      clip_path: clip.path,
-      clip_thumbnail: clip.thumbnail,
+      clip_url: clip.clip_url || `/workspace/clips/${clip.filename}`,
+      clip_thumbnail: clip.thumbnail || `/workspace/thumbnails/${clip.id}.jpg`,
       media_type: clip.media_type,
-      ken_burns_preset: isStill ? (clip.ken_burns_preset || 'zoom_in_center') : null,
+      ken_burns: kb,
+      ken_burns_preset: kb,
       start: Number(curT.toFixed(3)),
+      end: endT,
       duration: Number(thisDur.toFixed(3)),
       in_point: 0,
       out_point: Number(thisDur.toFixed(3)),
       role: 'primary_story',
+      style_fx: 'clean',
       pinned: true
     });
     curT += thisDur;
@@ -4577,11 +4589,21 @@ async function executeSectionInsert(sec, mediaType, pacing) {
   const existingEvents = (Studio.timeline && Studio.timeline.events) ? Studio.timeline.events : [];
   const keptEvents = existingEvents.filter(e => e.start < secStart - 0.05 || e.start >= secEnd - 0.05);
   const mergedEvents = [...keptEvents, ...newEvents].sort((a, b) => a.start - b.start);
+  mergedEvents.forEach((ev, i) => {
+    ev.index = i;
+    if (ev.end === undefined && ev.duration !== undefined) {
+      ev.end = Number((ev.start + ev.duration).toFixed(3));
+    }
+    if (!ev.clip_url && ev.clip_filename) {
+      ev.clip_url = `/workspace/clips/${ev.clip_filename}`;
+    }
+  });
 
   if (!Studio.timeline) {
     Studio.timeline = { total_duration: (Studio.audio && Studio.audio.duration) || 30.0, events: [] };
   }
   Studio.timeline.events = mergedEvents;
+  triggerWorkspaceAutoSave();
   renderTimelineView();
   syncVideoDecodersToTime(secStart, true);
   seekToTime(secStart);
@@ -5117,8 +5139,19 @@ async function uploadMediaBatch(fileList) {
       await triggerGenerateTimeline();
     }
   } else {
-    // If no audio track is loaded yet, prepare workbench timeline state with newly added clips
+    // If no audio track is loaded yet, automatically populate workbench timeline so media displays immediately
+    try {
+      const res = await api('/api/timeline/populate-workbench', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clips: Studio.clips, still_duration: stillDur }),
+      });
+      Studio.timeline = res.timeline;
+    } catch (err) {
+      console.warn('Populate workbench fallback:', err);
+    }
     renderTimelineView();
+    seekToTime(0);
   }
 }
 
