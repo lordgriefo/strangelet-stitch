@@ -4890,6 +4890,26 @@ function zoomTimeline(delta) {
   triggerWorkspaceAutoSave();
 }
 
+// 1-Click Instant Reset to Clean Blank Slate (2-Step Confirmation)
+const btnResetProject = document.getElementById('btnResetProject');
+if (btnResetProject) {
+  btnResetProject.onclick = async () => {
+    const prompt1 = confirm(
+      "🔄 Reset Project to Blank Canvas?\n\nThis will unload the music track, timeline cuts, and media bays so you can start a fresh custom project."
+    );
+    if (!prompt1) return;
+
+    const prompt2 = confirm(
+      "⚠️ Are you completely sure?\n\nAll demo audio, scratch cuts, and custom edits will be wiped. Click OK to proceed with a clean slate."
+    );
+    if (!prompt2) return;
+
+    await resetSessionToCleanSlate();
+    drawIdleCanvas();
+    alert("✨ Project Reset Complete!\n\nCanvas and timeline cleared. Drop your own music track or video/image files to begin editing.");
+  };
+}
+
 // 1-Click Load Synth Demo Track & Media
 const btnLoadDemo = document.getElementById('btnLoadDemo');
 if (btnLoadDemo) {
@@ -7598,11 +7618,16 @@ function closeAllDesktopMenus() {
 async function executeMenuAction(actionId, entryEl) {
   closeAllDesktopMenus();
   switch (actionId) {
-    case 'menuActionNewSession':
-      if (confirm('Start a new session? This will perform a 100% complete project teardown and reset to a clean blank slate.')) {
-        await resetSessionToCleanSlate();
-      }
+    case 'menuActionNewSession': {
+      const step1 = confirm('Start a new session? This will perform a project teardown and reset to a clean blank slate.');
+      if (!step1) break;
+      const step2 = confirm('Are you completely sure? All current cuts, audio, and custom edits will be wiped.');
+      if (!step2) break;
+      await resetSessionToCleanSlate();
+      drawIdleCanvas();
+      alert('✨ Project Reset Complete! Canvas and timeline cleared.');
       break;
+    }
     case 'menuActionOpenProject':
       if (els.openProjectInput) els.openProjectInput.click();
       else document.getElementById('openProjectInput')?.click();
