@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Strangelet Splicer",
+  "productName": "Strangelet Stitch",
   "version": "1.1.0",
-  "identifier": "com.strangelet.splicer",
+  "identifier": "com.strangelet.stitch",
   "build": {
     "beforeDevCommand": "npm run start",
     "devUrl": "http://127.0.0.1:8765",
@@ -12,7 +12,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Strangelet Splicer",
+        "title": "Strangelet Stitch",
         "width": 1440,
         "height": 900,
         "minWidth": 1200,

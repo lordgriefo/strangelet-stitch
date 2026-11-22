@@ -1,11 +1,11 @@
 [package]
-name = "strangelet-splicer"
+name = "strangelet-stitch"
 version = "1.1.0"
-description = "Strangelet Splicer — Standalone AI Audio-Reactive Music Video Engine"
+description = "Strangelet Stitch — Standalone AI Audio-Reactive Music Video Engine"
 edition = "2021"
 
 [lib]
-name = "strangelet_splicer_lib"
+name = "strangelet_stitch_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

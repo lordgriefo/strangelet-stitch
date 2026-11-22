@@ -4946,6 +4946,42 @@ if (btnLoadDemo) {
   };
 }
 
+// 1-Click Load 'The Breach' Demo Track & Media
+const btnLoadBreachDemo = document.getElementById('btnLoadBreachDemo');
+if (btnLoadBreachDemo) {
+  btnLoadBreachDemo.onclick = async (e) => {
+    const btn = e.currentTarget;
+    const orig = btn.textContent;
+    btn.textContent = '⏳ Loading The Breach...';
+    btn.disabled = true;
+    try {
+      const res = await api('/api/demo/breach', { method: 'POST' });
+      Studio.audio = res.audio;
+      Studio.clips = res.clips;
+      Studio.timeline = res.timeline;
+      if (res.lyrics) {
+        Studio.lyrics = res.lyrics;
+        syncLyricsUiControls();
+      }
+      if (els.globalPromptInput) {
+        els.globalPromptInput.value = 'The Breach - surreal occult rock energy-arc with Ken Burns motion';
+      }
+      renderClipLibrary();
+      renderAudioState();
+      renderTimelineView();
+      if (Studio.audio && Studio.audio.audio_url) {
+        AudioEngine.loadAudioFromUrl(Studio.audio.audio_url);
+      }
+      seekToTime(0);
+    } catch (err) {
+      alert(`Failed to load The Breach demo: ${err.message}`);
+    } finally {
+      btn.textContent = orig;
+      btn.disabled = false;
+    }
+  };
+}
+
 // Upload Audio Track
 if (els.audioFileInput) {
   els.audioFileInput.onchange = async (e) => {

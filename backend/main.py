@@ -1411,6 +1411,78 @@ async def load_demo_project():
     }
 
 
+@app.post("/api/demo/breach")
+async def load_breach_demo():
+    """Load 'The Breach' full demo track, synchronized lyrics, and 87 curated still assets."""
+    breach_dir = BASE_DIR / "demo" / "the-breach"
+    if not breach_dir.exists():
+        raise HTTPException(status_code=404, detail="The Breach demo directory not found.")
+
+    # 1. Audio
+    src_audio = breach_dir / "the-breach.mp3"
+    dest_audio = AUDIO_DIR / "the-breach.mp3"
+    if src_audio.exists():
+        shutil.copy2(src_audio, dest_audio)
+        analysis = await asyncio.to_thread(analyze_audio_file, dest_audio)
+        analysis["audio_url"] = f"/workspace/audio/{dest_audio.name}"
+        analysis["audio_path"] = str(dest_audio)
+        STATE["audio"] = analysis
+    else:
+        raise HTTPException(status_code=404, detail="the-breach.mp3 not found in demo folder.")
+
+    # 2. Lyrics
+    src_lrc = breach_dir / "the-breach.lrc"
+    if src_lrc.exists():
+        raw_text = src_lrc.read_text(encoding="utf-8", errors="ignore")
+        STATE["lyrics"] = parse_lyrics_file(
+            filename="the-breach.lrc",
+            raw_text=raw_text,
+            total_duration=float(analysis.get("duration", 300.0)),
+            global_offset=0.0,
+            include_in_render=True,
+        )
+
+    # 3. Stills / Clips
+    stills_dir = breach_dir / "stills"
+    loaded_clips = []
+    if stills_dir.exists():
+        for img_path in sorted(stills_dir.glob("*.jpeg")):
+            dest_img = CLIPS_DIR / img_path.name
+            if not dest_img.exists():
+                shutil.copy2(img_path, dest_img)
+            cid = f"clip_{img_path.stem[:14]}"
+            meta = await asyncio.to_thread(analyze_clip_local_cv, dest_img, cid)
+            meta["description"] = f"Still Image (Ken Burns): The Breach scene {img_path.stem}"
+            meta["vibe_tags"] = ["the-breach", "surreal", "cinematic", "still-image", "occult-rock"]
+            meta["lyric_keywords"] = ["breach", "shadow", "threshold", "astral", "night", "fire"]
+            meta["recommended_sections"] = ["intro", "verse", "chorus", "bridge", "outro"]
+            loaded_clips.append(meta)
+
+    STATE["clips"] = loaded_clips
+
+    # 4. Timeline
+    timeline = build_automated_timeline(
+        audio_analysis=analysis,
+        clips=loaded_clips,
+        template_id="narrative_storyboard",
+        global_prompt="The Breach - surreal occult rock energy-arc with Ken Burns motion",
+        fx_intensity=0.70,
+        min_clip_duration=3.0,
+        transition_mode="hard_cut",
+        preserve_full_duration=True,
+        story_vs_chop=0.15,
+        use_story_spine=True,
+    )
+    STATE["timeline"] = timeline
+    save_library_state(STATE)
+    return {
+        "audio": analysis,
+        "clips": loaded_clips,
+        "timeline": timeline,
+        "lyrics": STATE.get("lyrics"),
+    }
+
+
 app.mount("/workspace", StaticFiles(directory=str(WORKSPACE_DIR)), name="workspace")
 
 FRONTEND_DIR = BASE_DIR / "frontend"

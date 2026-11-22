@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Default permissions for Strangelet Splicer and native FFmpeg sidecar",
+  "description": "Default permissions for Strangelet Stitch and native FFmpeg sidecar",
   "windows": ["main"],
   "permissions": [
     "core:default",

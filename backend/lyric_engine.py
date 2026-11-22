@@ -221,9 +221,9 @@ def get_active_lyric_cue(
 
 
 def generate_demo_lyrics(total_duration: float = 24.0) -> dict:
-    demo_lrc = """[ti:Strangelet Splicer Synth Demo]
-[ar:Strangelet Splicer]
-[00:00.50]Signal locked inside the splicing machine
+    demo_lrc = """[ti:Strangelet Stitch Synth Demo]
+[ar:Strangelet Stitch]
+[00:00.50]Signal locked inside the stitching machine
 [00:04.00]Chasing neon ghosts across the silver screen
 [00:08.00]Voltage rising as the transients align
 [00:12.00]Cut the frame and bend the timeline

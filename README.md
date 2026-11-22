@@ -1,4 +1,4 @@
-# ⚡ STRANGELET SPLICER
+# ⚡ STRANGELET STITCH
 
 > **The Esoteric, Audio-Reactive AI Montage & Music Video Synthesis Engine.**  
 > *Autonomous Energy-Arc Sequencing · Dual-Player Ping-Pong Buffering · Hardware Visual Shaders · Kinetic Subtitles*
@@ -12,11 +12,11 @@
 
 ---
 
-## 🎬 What is Strangelet Splicer?
+## 🎬 What is Strangelet Stitch?
 
-**Strangelet Splicer** is a hybrid desktop workstation and automated music video synthesis engine. Built on a zero-latency **Tauri + FastAPI + Web Audio + Canvas** stack, it deconstructs loaded audio tracks into transients, downbeats, BPM tempos, and musical sections—then algorithmically splices video clips, still-image Ken Burns motion sequences, and typographic lyrics into hypnotic, tempo-locked montages.
+**Strangelet Stitch** is a hybrid desktop workstation and automated music video synthesis engine. Built on a zero-latency **Tauri + FastAPI + Web Audio + Canvas** stack, it deconstructs loaded audio tracks into transients, downbeats, BPM tempos, and musical sections—then algorithmically splices video clips, still-image Ken Burns motion sequences, and typographic lyrics into hypnotic, tempo-locked montages.
 
-Whether you're crafting high-octane 90s MTV grunge cuts, hypnotic ambient slow burns, or vertical TikTok/Reel lyric visualizers, Strangelet Splicer gives you the power of algorithmic generative editing with granular non-linear workbench control.
+Whether you're crafting high-octane 90s MTV grunge cuts, hypnotic ambient slow burns, or vertical TikTok/Reel lyric visualizers, Strangelet Stitch gives you the power of algorithmic generative editing with granular non-linear workbench control.
 
 ---
 
@@ -106,8 +106,8 @@ graph TD
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/<YOUR_USERNAME>/strangelet-splicer.git
-cd strangelet-splicer
+git clone https://github.com/lordgriefo/strangelet-stitch.git
+cd strangelet-stitch
 ```
 
 ### 2. Set Up the Python Environment

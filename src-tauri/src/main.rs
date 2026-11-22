@@ -1,5 +1,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    strangelet_splicer_lib::run();
+    strangelet_stitch_lib::run();
 }
