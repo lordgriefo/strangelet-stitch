@@ -918,18 +918,750 @@ function getStillDefaultDuration() {
   return Math.max(0.5, Number(barSec.toFixed(3)));
 }
 
-async function api(path, options = {}) {
-  const url = resolveApiUrl(path);
-  const resp = await fetch(url, options);
-  if (!resp.ok) {
-    let errText = resp.statusText;
-    try {
-      const j = await resp.json();
-      errText = j.detail || JSON.stringify(j);
-    } catch (_) {}
-    throw new Error(errText);
+// ── Client-Side In-Browser Audio & Visual Synthesis Engine ──
+function createProceduralAudioWav(bpm = 120, bars = 8) {
+  const sampleRate = 44100;
+  const beats = bars * 4;
+  const durationSec = (60.0 / bpm) * beats;
+  const numSamples = Math.floor(sampleRate * durationSec);
+  const buffer = new Float32Array(numSamples);
+
+  const beatSec = 60.0 / bpm;
+  for (let b = 0; b < beats; b++) {
+    const beatTime = b * beatSec;
+    const startIdx = Math.floor(beatTime * sampleRate);
+
+    // Kick on every beat
+    const kickSamples = Math.floor(0.25 * sampleRate);
+    for (let i = 0; i < kickSamples && startIdx + i < numSamples; i++) {
+      const t = i / sampleRate;
+      const freq = 120 * Math.exp(-t * 28);
+      const amp = Math.exp(-t * 12);
+      buffer[startIdx + i] += Math.sin(2 * Math.PI * freq * t) * amp * 0.75;
+    }
+
+    // Snare on beats 2 and 4 (0-indexed: 1 and 3)
+    if (b % 2 === 1) {
+      const snareSamples = Math.floor(0.2 * sampleRate);
+      for (let i = 0; i < snareSamples && startIdx + i < numSamples; i++) {
+        const t = i / sampleRate;
+        const noise = (Math.random() * 2 - 1) * Math.exp(-t * 16);
+        const tone = Math.sin(2 * Math.PI * 180 * t) * Math.exp(-t * 20);
+        buffer[startIdx + i] += (noise * 0.4 + tone * 0.3);
+      }
+    }
+
+    // Hi-hat on every eighth note
+    for (let sub = 0; sub < 2; sub++) {
+      const hatStart = Math.floor((beatTime + sub * (beatSec / 2)) * sampleRate);
+      const hatSamples = Math.floor(0.04 * sampleRate);
+      for (let i = 0; i < hatSamples && hatStart + i < numSamples; i++) {
+        const t = i / sampleRate;
+        buffer[hatStart + i] += (Math.random() * 2 - 1) * Math.exp(-t * 60) * 0.18;
+      }
+    }
+
+    // Acid bass notes
+    const noteFreqs = [55, 65.4, 73.4, 82.4, 98, 110];
+    const freq = noteFreqs[b % noteFreqs.length];
+    const bassSamples = Math.floor(beatSec * 0.85 * sampleRate);
+    for (let i = 0; i < bassSamples && startIdx + i < numSamples; i++) {
+      const t = i / sampleRate;
+      const saw = 2 * ((t * freq) % 1) - 1;
+      const amp = Math.exp(-t * 3.5);
+      buffer[startIdx + i] += saw * amp * 0.25;
+    }
   }
-  return resp.json();
+
+  // 16-bit PCM WAV
+  const wavBuffer = new ArrayBuffer(44 + numSamples * 2);
+  const view = new DataView(wavBuffer);
+  view.setUint32(0, 0x52494646, false); // "RIFF"
+  view.setUint32(4, 36 + numSamples * 2, true);
+  view.setUint32(8, 0x57415645, false); // "WAVE"
+  view.setUint32(12, 0x666d7420, false); // "fmt "
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true); // PCM
+  view.setUint16(22, 1, true); // Mono
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true); // Block align
+  view.setUint16(34, 16, true); // Bits per sample
+  view.setUint32(36, 0x64617461, false); // "data"
+  view.setUint32(40, numSamples * 2, true);
+
+  let offset = 44;
+  for (let i = 0; i < numSamples; i++) {
+    const s = Math.max(-1, Math.min(1, buffer[i]));
+    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    offset += 2;
+  }
+  const blob = new Blob([wavBuffer], { type: 'audio/wav' });
+  return URL.createObjectURL(blob);
+}
+
+function createProceduralGraphicCanvas(type) {
+  const c = document.createElement('canvas');
+  c.width = 640;
+  c.height = 360;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#0a0a14';
+  ctx.fillRect(0, 0, 640, 360);
+
+  if (type === 'portal') {
+    // Alchemical gold hexagram & glowing rings
+    ctx.strokeStyle = '#ffd700';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(320, 180, 110, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.strokeStyle = '#ff6b00';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(320, 180, 130, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.strokeStyle = '#39ff14';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(240, 100, 160, 160);
+    ctx.font = 'bold 16px monospace';
+    ctx.fillStyle = '#ffd700';
+    ctx.textAlign = 'center';
+    ctx.fillText('AS ABOVE, SO BELOW', 320, 185);
+  } else {
+    // Cyberpunk vector grid
+    ctx.strokeStyle = '#00e5ff';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= 640; x += 40) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, 360);
+      ctx.stroke();
+    }
+    for (let y = 0; y <= 360; y += 40) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(640, y);
+      ctx.stroke();
+    }
+    ctx.font = 'bold 20px monospace';
+    ctx.fillStyle = '#ff007f';
+    ctx.textAlign = 'center';
+    ctx.fillText('STRANGELET STITCH', 320, 185);
+  }
+  return c.toDataURL('image/png');
+}
+
+// ── Pure Client-Side Emulation Gateway (No Backend Required) ──
+async function handleClientSideApi(path, options = {}) {
+  let payload = {};
+  if (options.body) {
+    if (typeof options.body === 'string') {
+      try { payload = JSON.parse(options.body); } catch (_) {}
+    } else if (typeof options.body === 'object' && !(options.body instanceof FormData)) {
+      payload = options.body;
+    }
+  }
+
+  // 1. Initial State & Templates
+  if (path === '/api/state') {
+    let templates = [];
+    try {
+      const pResp = await fetch('./presets.json');
+      if (pResp.ok) {
+        const pJson = await pResp.json();
+        templates = Object.values(pJson);
+      }
+    } catch (_) {}
+    return {
+      settings: Studio.settings || {},
+      provider_presets: Studio.providerPresets || {},
+      templates: templates.length ? templates : (Studio.templates || []),
+      audio: Studio.audio,
+      clips: Studio.clips || [],
+      timeline: Studio.timeline,
+      lyrics: Studio.lyrics
+    };
+  }
+
+  // 2. Demo Load (Procedural Electronic Synth Demo)
+  if (path === '/api/demo/load') {
+    const dur = 16.0;
+    const bpm = 120;
+    const beatSec = 60.0 / bpm; // 0.5s
+    const barSec = beatSec * 4;  // 2.0s
+    const demoAudioUrl = createProceduralAudioWav(bpm, 8);
+
+    const beats = [];
+    for (let b = 0; b < dur; b += beatSec) beats.push(Number(b.toFixed(3)));
+    const bars = [];
+    for (let b = 0; b < dur; b += barSec) bars.push(Number(b.toFixed(3)));
+    const snares = [];
+    for (let b = 1; b < beats.length; b += 2) snares.push(beats[b]);
+
+    const peaks = [];
+    for (let i = 0; i < 800; i++) {
+      const ph = (i / 800) * 16 * 2;
+      const kick = (ph % 1 < 0.15) ? 0.9 : 0.1;
+      const snare = ((ph + 0.5) % 2 < 0.2) ? 0.75 : 0.1;
+      peaks.push(Number(Math.max(kick, snare, Math.random() * 0.4).toFixed(3)));
+    }
+
+    const demoAudio = {
+      filename: 'Strangelet_Stitch_Synth_120BPM.wav',
+      audio_url: demoAudioUrl,
+      duration: dur,
+      bpm: bpm,
+      peaks: peaks,
+      beats: beats,
+      bars: bars,
+      downbeats: bars,
+      snare_transients: snares,
+      sections: [
+        { id: 'sec_1', type: 'intro', label: 'INTRO', start: 0, end: 4.0 },
+        { id: 'sec_2', type: 'verse', label: 'BUILD', start: 4.0, end: 8.0 },
+        { id: 'sec_3', type: 'drop', label: 'DROP', start: 8.0, end: 12.0 },
+        { id: 'sec_4', type: 'chorus', label: 'OUTRO', start: 12.0, end: 16.0 }
+      ]
+    };
+
+    const demoClips = [
+      {
+        id: 'demo_clip_1',
+        filename: 'melies-moon.webm',
+        clip_url: './assets/melies-moon.webm',
+        media_type: 'video',
+        is_image: false,
+        duration: 4.5,
+        sequence_order: 1
+      },
+      {
+        id: 'demo_clip_2',
+        filename: 'melies_moon_isolated.png',
+        clip_url: './assets/melies_moon_isolated.png',
+        media_type: 'image',
+        is_image: true,
+        duration: 2.0,
+        sequence_order: 2
+      },
+      {
+        id: 'demo_clip_3',
+        filename: 'melies_clouds_frame.png',
+        clip_url: './assets/melies_clouds_frame.png',
+        media_type: 'image',
+        is_image: true,
+        duration: 2.0,
+        sequence_order: 3
+      },
+      {
+        id: 'demo_clip_4',
+        filename: 'alchemical_portal.png',
+        clip_url: createProceduralGraphicCanvas('portal'),
+        media_type: 'image',
+        is_image: true,
+        duration: 2.0,
+        sequence_order: 4
+      },
+      {
+        id: 'demo_clip_5',
+        filename: 'cyberpunk_vectors.png',
+        clip_url: createProceduralGraphicCanvas('grid'),
+        media_type: 'image',
+        is_image: true,
+        duration: 2.0,
+        sequence_order: 5
+      }
+    ];
+
+    const events = [];
+    let t = 0;
+    let cIdx = 0;
+    while (t < dur) {
+      const cutDur = Math.min(2.0, dur - t);
+      const clip = demoClips[cIdx % demoClips.length];
+      events.push({
+        id: `demo_evt_${events.length}`,
+        clip_id: clip.id,
+        clip_filename: clip.filename,
+        clip_url: clip.clip_url,
+        media_type: clip.media_type,
+        is_image: clip.is_image,
+        start: Number(t.toFixed(3)),
+        end: Number((t + cutDur).toFixed(3)),
+        duration: Number(cutDur.toFixed(3)),
+        in_point: 0,
+        transition: 'hard_cut',
+        style_fx: events.length % 2 === 0 ? 'clean' : 'fx-crt-phosphor'
+      });
+      t += cutDur;
+      cIdx++;
+    }
+
+    const demoTimeline = {
+      template_id: 'core_jump_cut',
+      total_duration: dur,
+      events: events
+    };
+
+    const demoLyrics = {
+      cues: [
+        { start: 0.5, end: 3.8, text: 'Strangelet Stitch • Cosmic Splicer Online' },
+        { start: 4.2, end: 7.8, text: 'Méliès Moon In Orbit • Video & Stills' },
+        { start: 8.2, end: 11.8, text: 'As Above, So Below • Synchronized Splicing' },
+        { start: 12.2, end: 15.8, text: '120 BPM Breakbeat • Ready To Render' }
+      ]
+    };
+
+    Studio.audio = demoAudio;
+    Studio.clips = demoClips;
+    Studio.timeline = demoTimeline;
+    Studio.lyrics = demoLyrics;
+
+    return { audio: demoAudio, clips: demoClips, timeline: demoTimeline, lyrics: demoLyrics };
+  }
+
+  // 3. Demo Load: The Breach
+  if (path === '/api/demo/breach') {
+    const dur = 16.0;
+    const bpm = 110;
+    const beatSec = 60.0 / bpm;
+    const barSec = beatSec * 4;
+    const demoAudioUrl = createProceduralAudioWav(bpm, 8);
+
+    const beats = [];
+    for (let b = 0; b < dur; b += beatSec) beats.push(Number(b.toFixed(3)));
+    const bars = [];
+    for (let b = 0; b < dur; b += barSec) bars.push(Number(b.toFixed(3)));
+    const snares = [];
+    for (let b = 1; b < beats.length; b += 2) snares.push(beats[b]);
+
+    const peaks = [];
+    for (let i = 0; i < 800; i++) {
+      const ph = (i / 800) * 16 * 2;
+      peaks.push(Number(Math.max(0.1, (ph % 1 < 0.2) ? 0.85 : 0.25).toFixed(3)));
+    }
+
+    const demoAudio = {
+      filename: 'The_Breach_Chasing_Shadows_110BPM.wav',
+      audio_url: demoAudioUrl,
+      duration: dur,
+      bpm: bpm,
+      peaks: peaks,
+      beats: beats,
+      bars: bars,
+      downbeats: bars,
+      snare_transients: snares,
+      sections: [
+        { id: 'sec_1', type: 'intro', label: 'THE PARSONAGE', start: 0, end: 4.0 },
+        { id: 'sec_2', type: 'verse', label: 'INCANTATION', start: 4.0, end: 8.0 },
+        { id: 'sec_3', type: 'drop', label: 'THE BREACH', start: 8.0, end: 12.0 },
+        { id: 'sec_4', type: 'chorus', label: 'ASTRAL GATE', start: 12.0, end: 16.0 }
+      ]
+    };
+
+    const demoClips = [
+      {
+        id: 'breach_clip_1',
+        filename: 'melies-moon.webm',
+        clip_url: './assets/melies-moon.webm',
+        media_type: 'video',
+        is_image: false,
+        duration: 4.5,
+        sequence_order: 1
+      },
+      {
+        id: 'breach_clip_2',
+        filename: 'alchemical_portal.png',
+        clip_url: createProceduralGraphicCanvas('portal'),
+        media_type: 'image',
+        is_image: true,
+        duration: 2.0,
+        sequence_order: 2
+      },
+      {
+        id: 'breach_clip_3',
+        filename: 'melies_moon_isolated.png',
+        clip_url: './assets/melies_moon_isolated.png',
+        media_type: 'image',
+        is_image: true,
+        duration: 2.0,
+        sequence_order: 3
+      }
+    ];
+
+    const events = [];
+    let t = 0;
+    let cIdx = 0;
+    while (t < dur) {
+      const cutDur = Math.min(2.0, dur - t);
+      const clip = demoClips[cIdx % demoClips.length];
+      events.push({
+        id: `breach_evt_${events.length}`,
+        clip_id: clip.id,
+        clip_filename: clip.filename,
+        clip_url: clip.clip_url,
+        media_type: clip.media_type,
+        is_image: clip.is_image,
+        start: Number(t.toFixed(3)),
+        end: Number((t + cutDur).toFixed(3)),
+        duration: Number(cutDur.toFixed(3)),
+        in_point: 0,
+        transition: 'hard_cut',
+        style_fx: 'fx-sepia-rotogravure'
+      });
+      t += cutDur;
+      cIdx++;
+    }
+
+    const demoTimeline = {
+      template_id: 'avant_garde_debord',
+      total_duration: dur,
+      events: events
+    };
+
+    const demoLyrics = {
+      cues: [
+        { start: 0.5, end: 4.0, text: 'The Breach • Chasing Shadows' },
+        { start: 4.5, end: 8.0, text: 'Across The Alchemical Desert • Past The Seven Seals' },
+        { start: 8.5, end: 12.0, text: 'O\'Shibboleth At Midnight • Transmission Strong' },
+        { start: 12.5, end: 15.8, text: 'Strangelet Stitch • Cut Complete' }
+      ]
+    };
+
+    Studio.audio = demoAudio;
+    Studio.clips = demoClips;
+    Studio.timeline = demoTimeline;
+    Studio.lyrics = demoLyrics;
+
+    return { audio: demoAudio, clips: demoClips, timeline: demoTimeline, lyrics: demoLyrics };
+  }
+
+  // 4. Audio File Upload (Decoded Client-Side in Browser)
+  if (path === '/api/audio/upload') {
+    let file = null;
+    if (options.body instanceof FormData) {
+      file = options.body.get('file');
+    }
+    if (!file) throw new Error('No audio file provided');
+    const audioUrl = URL.createObjectURL(file);
+    let duration = 30.0;
+    const peaks = [];
+    try {
+      const actx = await AudioEngine.getContext();
+      const ab = await file.arrayBuffer();
+      const decoded = await actx.decodeAudioData(ab);
+      duration = Number(decoded.duration.toFixed(2));
+      const chan = decoded.getChannelData(0);
+      const step = Math.max(1, Math.floor(chan.length / 800));
+      for (let i = 0; i < 800 && i * step < chan.length; i++) {
+        let max = 0;
+        const endS = Math.min(chan.length, (i + 1) * step);
+        for (let j = i * step; j < endS; j += 4) {
+          const v = Math.abs(chan[j]);
+          if (v > max) max = v;
+        }
+        peaks.push(Number(max.toFixed(3)));
+      }
+    } catch (e) {
+      console.warn('Audio decoding fallback:', e);
+      for (let i = 0; i < 800; i++) peaks.push(Number((Math.random() * 0.6 + 0.1).toFixed(3)));
+    }
+
+    const bpm = 120;
+    const beatSec = 60.0 / bpm;
+    const barSec = beatSec * 4;
+    const beats = [];
+    for (let b = 0; b < duration; b += beatSec) beats.push(Number(b.toFixed(3)));
+    const bars = [];
+    for (let b = 0; b < duration; b += barSec) bars.push(Number(b.toFixed(3)));
+    const snares = [];
+    for (let b = 1; b < beats.length; b += 2) snares.push(beats[b]);
+
+    const sections = [
+      { id: 'sec_1', type: 'intro', label: 'INTRO', start: 0, end: Math.min(8.0, duration * 0.25) },
+      { id: 'sec_2', type: 'verse', label: 'VERSE', start: Math.min(8.0, duration * 0.25), end: Math.min(24.0, duration * 0.75) },
+      { id: 'sec_3', type: 'chorus', label: 'CHORUS', start: Math.min(24.0, duration * 0.75), end: duration }
+    ];
+
+    Studio.audio = {
+      filename: file.name,
+      audio_url: audioUrl,
+      duration: duration,
+      bpm: bpm,
+      peaks: peaks,
+      beats: beats,
+      bars: bars,
+      downbeats: bars,
+      snare_transients: snares,
+      sections: sections
+    };
+    return { audio: Studio.audio };
+  }
+
+  // 5. Video Clips & Still Images Upload (Client-Side Object URLs)
+  if (path === '/api/clips/upload') {
+    let files = [];
+    if (options.body instanceof FormData) {
+      files = options.body.getAll('files');
+    }
+    if (!files.length) return { clips: Studio.clips || [] };
+
+    for (const file of files) {
+      const isImage = VALID_IMAGE_EXT_REGEX.test(file.name);
+      const clipUrl = URL.createObjectURL(file);
+      const newClip = {
+        id: `clip_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        filename: file.name,
+        clip_url: clipUrl,
+        media_type: isImage ? 'image' : 'video',
+        is_image: isImage,
+        duration: isImage ? getStillDefaultDuration() : 4.0,
+        sequence_order: (Studio.clips ? Studio.clips.length : 0) + 1
+      };
+      if (!Studio.clips) Studio.clips = [];
+      Studio.clips.push(newClip);
+    }
+    return { clips: Studio.clips };
+  }
+
+  // 6. Populate Workbench Timeline (Sequencing Visuals Even Without Audio)
+  if (path === '/api/timeline/populate-workbench') {
+    const clips = (Studio.clips && Studio.clips.length) ? Studio.clips : [];
+    const events = [];
+    let curT = 0;
+    for (const c of clips) {
+      const dur = c.media_type === 'image' ? (Number(payload.still_duration) || 2.0) : (Number(c.duration) || 4.0);
+      events.push({
+        id: `wb_${Date.now()}_${events.length}`,
+        clip_id: c.id,
+        clip_filename: c.filename,
+        clip_url: c.clip_url,
+        media_type: c.media_type,
+        is_image: c.is_image,
+        start: Number(curT.toFixed(3)),
+        end: Number((curT + dur).toFixed(3)),
+        duration: Number(dur.toFixed(3)),
+        in_point: 0,
+        transition: 'hard_cut',
+        style_fx: 'clean'
+      });
+      curT += dur;
+    }
+    Studio.timeline = {
+      template_id: 'manual_workbench_slate',
+      total_duration: Math.max(12.0, Number(curT.toFixed(3))),
+      events: events
+    };
+    return { timeline: Studio.timeline };
+  }
+
+  // 7. Generate Timeline Cuts
+  if (path === '/api/timeline/generate') {
+    const totalDur = (Studio.audio && Studio.audio.duration) ? Studio.audio.duration : 24.0;
+    const clips = (Studio.clips && Studio.clips.length) ? Studio.clips : [];
+    const events = [];
+
+    if (clips.length > 0) {
+      const bpm = (Studio.audio && Studio.audio.bpm) || 120;
+      const barSec = (60.0 / bpm) * 4.0;
+      const cutStep = Math.max(0.5, Math.min(6.0, barSec));
+      let curT = 0;
+      let cIdx = 0;
+      while (curT < totalDur) {
+        const cutDur = Math.min(cutStep, totalDur - curT);
+        const clip = clips[cIdx % clips.length];
+        events.push({
+          id: `evt_${events.length}_${Math.random().toString(36).substr(2, 5)}`,
+          clip_id: clip.id,
+          clip_filename: clip.filename,
+          clip_url: clip.clip_url,
+          media_type: clip.media_type,
+          is_image: clip.is_image,
+          start: Number(curT.toFixed(3)),
+          end: Number((curT + cutDur).toFixed(3)),
+          duration: Number(cutDur.toFixed(3)),
+          in_point: 0,
+          transition: payload.transition_mode || 'hard_cut',
+          style_fx: 'clean'
+        });
+        curT += cutDur;
+        cIdx++;
+      }
+    }
+
+    Studio.timeline = {
+      template_id: payload.template_id || 'core_jump_cut',
+      total_duration: totalDur,
+      events: events
+    };
+    return { timeline: Studio.timeline };
+  }
+
+  // 8. Add Manual Cut Block
+  if (path === '/api/timeline/add-manual-block') {
+    const totalDur = (Studio.audio && Studio.audio.duration) ? Studio.audio.duration : 30.0;
+    if (!Studio.timeline) {
+      Studio.timeline = { template_id: 'manual_workbench_slate', total_duration: totalDur, events: [] };
+    }
+    if (!Array.isArray(Studio.timeline.events)) Studio.timeline.events = [];
+    const clip = (Studio.clips || []).find((c) => c.id === payload.clip_id) || (Studio.clips && Studio.clips[0]);
+    const start = Number(payload.start) || 0;
+    const dur = Number(payload.duration) || 2.5;
+
+    Studio.timeline.events.push({
+      id: `manual_evt_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+      clip_id: clip ? clip.id : 'unknown',
+      clip_filename: clip ? clip.filename : 'manual_clip',
+      clip_url: clip ? clip.clip_url : '',
+      media_type: clip ? clip.media_type : 'image',
+      is_image: clip ? clip.is_image : true,
+      start: Number(start.toFixed(3)),
+      end: Number((start + dur).toFixed(3)),
+      duration: Number(dur.toFixed(3)),
+      in_point: 0,
+      transition: 'hard_cut',
+      style_fx: 'clean'
+    });
+    Studio.timeline.events.sort((a, b) => a.start - b.start);
+    return { timeline: Studio.timeline };
+  }
+
+  // 9. Split Block at Playhead
+  if (path === '/api/timeline/split-at-playhead') {
+    const playhead = Number(payload.playhead_sec) || (els.mainAudio ? els.mainAudio.currentTime || 0 : 0);
+    if (Studio.timeline && Array.isArray(Studio.timeline.events)) {
+      const evIdx = Studio.timeline.events.findIndex(e => playhead > e.start + 0.05 && playhead < e.end - 0.05);
+      if (evIdx !== -1) {
+        const orig = Studio.timeline.events[evIdx];
+        const leftDur = Number((playhead - orig.start).toFixed(3));
+        const rightDur = Number((orig.end - playhead).toFixed(3));
+        const leftEv = { ...orig, end: playhead, duration: leftDur };
+        const rightEv = {
+          ...orig,
+          id: `split_${Date.now()}`,
+          start: playhead,
+          duration: rightDur,
+          in_point: (orig.in_point || 0) + leftDur
+        };
+        Studio.timeline.events.splice(evIdx, 1, leftEv, rightEv);
+      }
+    }
+    return { timeline: Studio.timeline };
+  }
+
+  // 10. Delete Cut Block
+  if (path === '/api/timeline/delete-event') {
+    const idx = Number(payload.index);
+    if (Studio.timeline && Array.isArray(Studio.timeline.events) && idx >= 0 && idx < Studio.timeline.events.length) {
+      Studio.timeline.events.splice(idx, 1);
+    }
+    return { timeline: Studio.timeline };
+  }
+
+  // 11. Trim / Update Cut Block
+  if (path === '/api/timeline/trim-event' || path === '/api/timeline/update-event') {
+    const idx = Number(payload.index);
+    if (Studio.timeline && Array.isArray(Studio.timeline.events) && idx >= 0 && idx < Studio.timeline.events.length) {
+      Object.assign(Studio.timeline.events[idx], payload.patch || payload);
+    }
+    return { timeline: Studio.timeline };
+  }
+
+  // 12. Swap Clip on Cut Block
+  if (path === '/api/timeline/swap-clip') {
+    const idx = Number(payload.index);
+    const clip = (Studio.clips || []).find(c => c.id === payload.new_clip_id);
+    if (clip && Studio.timeline && Array.isArray(Studio.timeline.events) && idx >= 0 && idx < Studio.timeline.events.length) {
+      const ev = Studio.timeline.events[idx];
+      ev.clip_id = clip.id;
+      ev.clip_filename = clip.filename;
+      ev.clip_url = clip.clip_url;
+      ev.media_type = clip.media_type;
+      ev.is_image = clip.is_image;
+    }
+    return { timeline: Studio.timeline };
+  }
+
+  // 13. Lyrics Upload & Management
+  if (path === '/api/lyrics/upload') {
+    let file = null;
+    if (options.body instanceof FormData) file = options.body.get('file');
+    if (!file) throw new Error('No lyrics file provided');
+    const text = await file.text();
+    const cues = [];
+    const lines = text.split('\n');
+    for (const line of lines) {
+      const m = line.match(/\[(\d+):(\d+(?:\.\d+)?)\](.*)/);
+      if (m) {
+        const min = parseInt(m[1], 10);
+        const sec = parseFloat(m[2]);
+        const cueStart = min * 60 + sec;
+        const cueText = m[3].trim();
+        if (cueText) {
+          cues.push({ start: cueStart, end: cueStart + 4.0, text: cueText });
+        }
+      }
+    }
+    for (let i = 0; i < cues.length - 1; i++) {
+      cues[i].end = Math.min(cues[i].end, cues[i + 1].start);
+    }
+    Studio.lyrics = { cues };
+    return { lyrics: Studio.lyrics };
+  }
+
+  if (path === '/api/lyrics') {
+    Studio.lyrics = null;
+    return { ok: true };
+  }
+
+  // 14. Clear Video or Stills
+  if (path === '/api/clips/clear/video') {
+    Studio.clips = (Studio.clips || []).filter(c => c.media_type === 'image' || c.is_image);
+    if (Studio.timeline && Array.isArray(Studio.timeline.events)) {
+      Studio.timeline.events = Studio.timeline.events.filter(e => e.media_type === 'image' || e.is_image);
+    }
+    return { ok: true };
+  }
+
+  if (path === '/api/clips/clear/still') {
+    Studio.clips = (Studio.clips || []).filter(c => c.media_type !== 'image' && !c.is_image);
+    if (Studio.timeline && Array.isArray(Studio.timeline.events)) {
+      Studio.timeline.events = Studio.timeline.events.filter(e => e.media_type !== 'image' && !e.is_image);
+    }
+    return { ok: true };
+  }
+
+  // 15. State Restore & Settings
+  if (path === '/api/state/restore' || path === '/api/session/new') {
+    return { ok: true };
+  }
+  if (path === '/api/settings') {
+    return { settings: Studio.settings || {} };
+  }
+
+  return { ok: true, status: 'offline_emulated' };
+}
+
+async function api(path, options = {}) {
+  const isStaticHost = typeof window !== 'undefined' && (
+    window.location.hostname.includes('github.io') ||
+    window.location.protocol === 'file:'
+  );
+
+  // If running in desktop app or custom backend server, try HTTP first
+  if (!isStaticHost) {
+    try {
+      const url = resolveApiUrl(path);
+      const resp = await fetch(url, options);
+      if (resp.ok) {
+        return await resp.json();
+      }
+    } catch (_) {
+      // Backend offline -> seamless fallback to in-browser client emulation
+    }
+  }
+
+  // Fallback seamlessly to In-Browser Client Emulation
+  return await handleClientSideApi(path, options);
 }
 
 function preloadStillImages() {
@@ -1035,6 +1767,7 @@ async function initStudio() {
       renderTimelineView();
       drawIdleCanvas();
     } else {
+      populateTemplates(Studio.timeline ? Studio.timeline.template_id : null);
       populateSettingsModal();
       updateStoryVsChopLabel();
       drawIdleCanvas();
@@ -1468,8 +2201,13 @@ function renderAudioState() {
 
   const a = Studio.audio;
   if (els.audioTrackLabel) els.audioTrackLabel.textContent = `🎵 ${a.filename}`;
-  if (els.audioStatsLabel) els.audioStatsLabel.textContent = `${a.bpm} BPM • ${a.duration.toFixed(1)}s • ${a.beats.length} Beats • ${a.downbeats.length} Bars • ${a.snare_transients.length} Snare Hits`;
-  if (els.statBpm) els.statBpm.textContent = `BPM: ${a.bpm}`;
+  if (els.audioStatsLabel) {
+    const beatLen = (a.beats || []).length;
+    const barLen = (a.downbeats || a.bars || []).length;
+    const snareLen = (a.snare_transients || []).length;
+    els.audioStatsLabel.textContent = `${a.bpm || 120} BPM • ${(a.duration || 0).toFixed(1)}s • ${beatLen} Beats • ${barLen} Bars • ${snareLen} Snare Hits`;
+  }
+  if (els.statBpm) els.statBpm.textContent = `BPM: ${a.bpm || 120}`;
 
   if (els.btnLoadAudio) {
     els.btnLoadAudio.textContent = `🎵 Track: ${a.filename}`;
