@@ -24,6 +24,7 @@ workspace/cache/
 !demo/**/*.wav
 !demo/**/*.mp4
 !demo/**/*.webm
+!frontend/assets/**
 
 # Local environment / IDE
 .env
